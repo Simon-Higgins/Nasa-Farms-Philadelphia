@@ -1,0 +1,162 @@
+
+
+from pathlib import Path
+import re
+import pandas as pd
+
+# =====================================
+# 1. FILE PATHS
+# =====================================
+
+# Script is inside Nasa/scripts/
+# Data is inside Nasa/files/
+BASE = Path(__file__).resolve().parent.parent
+FILES_DIR = BASE / "files"
+
+INPUT = FILES_DIR / "usda_yields.csv"
+OUTPUT = FILES_DIR / "county_yields_wide.csv"
+
+YEARS = [2024, 2025]
+
+if not INPUT.exists():
+    raise FileNotFoundError(f"Cannot find input CSV: {INPUT}")
+
+# =====================================
+# 2. LOAD USDA DATA
+# =====================================
+
+df = pd.read_csv(INPUT, dtype=str, low_memory=False)
+df.columns = df.columns.str.strip()
+
+print(f"Loaded {len(df):,} USDA records")
+
+# =====================================
+# 3. FILTER COUNTY-LEVEL YIELDS
+# =====================================
+
+df = df[
+    df["Geo Level"].fillna("").str.strip().str.upper().eq("COUNTY")
+    & df["Period"].fillna("").str.strip().str.upper().eq("YEAR")
+    & df["Domain"].fillna("").str.strip().str.upper().eq("TOTAL")
+    & df["Data Item"].fillna("").str.contains(
+        r"\bYIELD\b", case=False, regex=True
+    )
+].copy()
+
+print(f"Yield records after filtering: {len(df):,}")
+
+# =====================================
+# 4. CREATE COUNTY FIPS
+# =====================================
+
+df = df.dropna(subset=["State ANSI", "County ANSI"])
+
+df["county_fips"] = (
+    df["State ANSI"].str.strip().str.zfill(2)
+    + df["County ANSI"].str.strip().str.zfill(3)
+)
+
+# =====================================
+# 5. CLEAN YEARS AND YIELD VALUES
+# =====================================
+
+df["year"] = pd.to_numeric(
+    df["Year"], errors="coerce"
+)
+
+df = df[df["year"].isin(YEARS)].copy()
+df["year"] = df["year"].astype(int)
+
+df["yield_value"] = pd.to_numeric(
+    df["Value"]
+    .fillna("")
+    .str.replace(",", "", regex=False)
+    .str.strip(),
+    errors="coerce"
+)
+
+df = df.dropna(subset=["yield_value"])
+
+print(f"Valid 2024–2025 yield records: {len(df):,}")
+
+# =====================================
+# 6. CREATE CROP COLUMN NAMES
+# =====================================
+
+def clean_name(text):
+    text = text.lower().strip()
+    text = re.sub(r"[^a-z0-9]+", "_", text)
+    return text.strip("_")
+
+# Use full USDA Data Item descriptions so that
+# corn grain, corn silage, and different units
+# remain separate.
+
+df["yield_type"] = df["Data Item"].apply(clean_name)
+
+# =====================================
+# 7. CHECK DUPLICATES
+# =====================================
+
+keys = ["county_fips", "year", "yield_type"]
+
+duplicates = df.duplicated(keys, keep=False)
+
+if duplicates.any():
+    print("\nDuplicate USDA observations found:")
+    print(
+        df.loc[
+            duplicates,
+            keys + ["Commodity", "Data Item", "Value"]
+        ].head(20).to_string(index=False)
+    )
+
+    raise ValueError(
+        "Multiple observations have the same county, "
+        "year, and yield type. Check USDA production "
+        "classes or practices before pivoting."
+    )
+
+# =====================================
+# 8. PIVOT — ONE ROW PER COUNTY
+# =====================================
+
+wide = df.pivot(
+    index="county_fips",
+    columns=["yield_type", "year"],
+    values="yield_value"
+)
+
+# Convert MultiIndex columns into normal columns.
+# Example: corn_grain_yield_measured_in_bu_acre_2024
+
+wide.columns = [
+    f"{crop}_{year}"
+    for crop, year in wide.columns
+]
+
+wide = wide.reset_index()
+
+# Sort crop columns alphabetically, then by year
+yield_columns = sorted(
+    [col for col in wide.columns if col != "county_fips"]
+)
+
+wide = wide[["county_fips"] + yield_columns]
+
+wide = wide.sort_values("county_fips")
+
+# =====================================
+# 9. EXPORT CSV
+# =====================================
+
+FILES_DIR.mkdir(parents=True, exist_ok=True)
+
+wide.to_csv(OUTPUT, index=False)
+
+print("\nSUCCESS!")
+print(f"Saved to: {OUTPUT}")
+print(f"Counties: {len(wide):,}")
+print(f"Yield columns: {len(wide.columns) - 1}")
+print("\nPreview:")
+print(wide.head().to_string(index=False))

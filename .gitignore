@@ -1,0 +1,10 @@
+*.csv
+*.tif
+*.tiff
+*.ovr
+*.aux
+*.aux.xml
+*.vat.dbf
+
+2024/
+2025/
