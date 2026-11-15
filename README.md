@@ -54,18 +54,11 @@ Given this was a 48 hour hackathon and AI/SI usage was encouraged we used SI qui
 
 Scripts with heavy ai usage
 
-loadcdls.py
-cld_with_yields_cleanup.py
-merge_cdls_to_yields.py
-pivot_yields.py
-training_data_files_generation.py
+loadcdls.py, cld_with_yields_cleanup.py, merge_cdls_to_yields.py, pivot_yields.py, training_data_files_generation.py
 
 Scripts with minimal AI usage
 
-linear_reg.py
-neural_net.py
-random_forest.py
-nasa_data_merge.py
+linear_reg.py, neural_net.py, random_forest.py, nasa_data_merge.py
 
 
 
