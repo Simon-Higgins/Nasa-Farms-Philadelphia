@@ -13,17 +13,22 @@ from pyproj import Transformer
 # SETTINGS
 # =====================================
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 FILES = {
+    2019: BASE_DIR / "2019" / "2019_30m_cdls.tif",
+    2020: BASE_DIR / "2020" / "2020_30m_cdls.tif",
+    2021: BASE_DIR / "2021" / "2021_30m_cdls.tif",
+    2022: BASE_DIR / "2022" / "2022_30m_cdls.tif",
+    2023: BASE_DIR / "2023" / "2023_30m_cdls.tif",
     2024: BASE_DIR / "2024" / "2024_30m_cdls.tif",
-    2025: BASE_DIR / "2025" / "2025_30m_cdls.tif",
+    2025: BASE_DIR / "2025" / "2025_30m_cdls.tif"
 }
 
 GRID_SIZE = 5000  # meters (5000 = 5 km)
 GRID_CRS = "EPSG:5070"
 
-OUTPUT = BASE_DIR / "national_crop_rotations.csv"
+OUTPUT = BASE_DIR / "files" / "national_crop_rotations.csv"
 
 # USDA CDL crop codes
 CROPS = {
