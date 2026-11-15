@@ -25,7 +25,7 @@
       "lower_shortfall_normalized": 1.0,
       "score": 65.0,
       "rank": 1,
-      "explanation": "Compared with the baseline: 20 mm less rainfed shortfall over two years, with $30 less margin per acre per year."
+      "explanation": "Compared with the baseline: $5 more margin per acre per year, with 30 mm less rainfed shortfall over two years."
     },
     {
       "id": "sorghum-soybeans",
@@ -47,11 +47,11 @@
       "lower_shortfall_normalized": 0.5,
       "score": 50.0,
       "rank": 2,
-      "explanation": "Compared with the baseline: 10 mm less rainfed shortfall over two years, with $15 less margin per acre per year."
+      "explanation": "Compared with the baseline: $20 more margin per acre per year, with 20 mm less rainfed shortfall over two years."
     },
     {
       "id": "corn-soybeans",
-      "is_baseline": true,
+      "is_baseline": false,
       "seasons": [
         {
           "harvest_year": 2026,
@@ -69,10 +69,29 @@
       "lower_shortfall_normalized": 0.0,
       "score": 35.0,
       "rank": 3,
-      "explanation": "Assumed current rotation for this demo."
+      "explanation": "Compared with the baseline: $35 more margin per acre per year, with 10 mm less rainfed shortfall over two years."
     }
   ],
-  "unranked": [],
+  "unranked": [
+    {
+      "annual_margin_usd_per_acre": 145,
+      "rainfed_shortfall_mm": 70,
+      "id": "corn-corn",
+      "is_baseline": true,
+      "seasons": [
+        {
+          "harvest_year": 2026,
+          "crop": "corn"
+        },
+        {
+          "harvest_year": 2027,
+          "crop": "corn"
+        }
+      ],
+      "reason": "crop_family_change_required",
+      "explanation": "Your current rotation."
+    }
+  ],
   "applied_weights": {
     "margin": 0.35,
     "lower_rainfed_shortfall": 0.65
