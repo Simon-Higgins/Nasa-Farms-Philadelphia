@@ -4,7 +4,7 @@ This is our repository for the NASA Farming Challenge, a brief explanation of ho
   
 2. We went to cropland OS - https://www.nass.usda.gov/research-and-science/cropland/release?utm_source=chatgpt.com from the USDA.
    This site provides pixel specific data downloads of what crops are being grown in the US each year, the pixels are at a 30m resolution. In order to match this with our county level yield data we created a script that aggregates
-   the cropland data into a 5 km square with a latitude and longitude located at the center. The script aggregates the pixels up and outputs a percentage of each crop grown in that 5km region as well as a pixel count
+   the cropland data into a 5 km square with a latitude and longitude located at the center. The script aggregates the pixels up and outputs a percentage of each crop grown in that 5km region as well as a pixel count.
    The script we run to aggregate the cropland data is in scripts -> Loadcdls.py and outputs files -> national_crop_rotations.py
   
 3. We cleaned up the usda_yields file, pivoting the file to create a new column for every single crop yield in a given year at the county level. The script for this is pivot_yields.py and the output is county_yields_wide.csv
