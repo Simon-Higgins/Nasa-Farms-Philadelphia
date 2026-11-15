@@ -50,7 +50,7 @@ As Random Forest performed the best we ran our entire original training datasets
 
 AI USAGE
 
-Given this was a 48 hour hackathon and AI/SI usage was encouraged we used SI quite a bit, most of our data aggregation and data loading scripts were made either partially or entirely with chatgpt, the training of the models was not done with any substantial amount of gpt usage however
+Given this was a 48 hour hackathon and AI/SI usage was encouraged we used SI quite a bit, most of our data aggregation and data loading scripts were made either partially or entirely with chatgpt, the training of the models was not done with any substantial amount of gpt usage.
 
 Scripts with heavy ai usage
 
