@@ -22,35 +22,29 @@ For yield prediction training - training_data_files_generation.py creates our tr
 
 The results of the models were:
 
-==================================================
-          MLP NEURAL NETWORK RESULTS
-==================================================
-Crop                MAE          MSE       R²
---------------------------------------------------
-Corn              19.30       669.10    0.553
-Oats              14.95       444.97   -0.459
-Soybeans           5.54        52.12    0.607
-==================================================
+### MLP Neural Network Results
 
-==================================================
-          Linear Regression RESULTS
-==================================================
-Crop                MAE          MSE       R²
---------------------------------------------------
-Corn              27.02      1178.28    0.212
-Oats              12.89       298.16    0.022
-Soybeans           8.07       110.90    0.165
-==================================================
+| Crop | MAE | MSE | R² |
+|---|---:|---:|---:|
+| Corn | 19.30 | 669.10 | 0.553 |
+| Oats | 14.95 | 444.97 | -0.459 |
+| Soybeans | 5.54 | 52.12 | 0.607 |
 
-=============================================
-       RANDOM FOREST REGRESSION RESULTS
-=============================================
-Crop                MAE          MSE       R²
----------------------------------------------
-Corn              15.76       447.60    0.701
-Oats              10.92       211.87    0.305
-Soybeans           4.74        37.95    0.714
-=============================================
+### Linear Regression Results
+
+| Crop | MAE | MSE | R² |
+|---|---:|---:|---:|
+| Corn | 27.02 | 1178.28 | 0.212 |
+| Oats | 12.89 | 298.16 | 0.022 |
+| Soybeans | 8.07 | 110.90 | 0.165 |
+
+### Random Forest Regression Results
+
+| Crop | MAE | MSE | R² |
+|---|---:|---:|---:|
+| Corn | **15.76** | **447.60** | **0.701** |
+| Oats | **10.92** | **211.87** | **0.305** |
+| Soybeans | **4.74** | **37.95** | **0.714** |
 
 As Random Forest performed the best we ran our entire original training datasets through the RandomForestRegressor in order to come up with a predicted yield for every year and every county for our three crops.
 
