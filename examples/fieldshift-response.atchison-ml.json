@@ -1,0 +1,874 @@
+{
+  "data_mode": "planning_scenarios",
+  "county_fips": "20005",
+  "county_label": "Atchison County, KS",
+  "planning_years": [
+    2026,
+    2027
+  ],
+  "scenario_label": "Equal-weight historical weather pairs with supplied planning budgets",
+  "baseline": {
+    "id": "corn-corn",
+    "is_baseline": true,
+    "seasons": [
+      {
+        "crop": "corn",
+        "harvest_year": 2026
+      },
+      {
+        "crop": "corn",
+        "harvest_year": 2027
+      }
+    ],
+    "meets_crop_family_filter": false,
+    "heat_status": "passed",
+    "annual_margin_usd_per_acre": -291.90278124999986,
+    "rainfed_shortfall_mm": 380.81522399999994,
+    "margin_range_usd_per_acre": [
+      -324.0516550000002,
+      -253.9797549999996
+    ],
+    "shortfall_range_mm": [
+      214.53897849999998,
+      491.0576579999999
+    ],
+    "scenario_count": 4,
+    "scenarios": [
+      {
+        "historical_years": [
+          2020,
+          2021
+        ],
+        "seasons": [
+          {
+            "crop": "corn",
+            "harvest_year": 2026,
+            "historical_year": 2020,
+            "yield_basis": "ml_prediction",
+            "prediction_provenance": {
+              "county_fips": "20005",
+              "crop": "corn",
+              "harvest_year": 2020,
+              "scenario_id": "historical-export",
+              "predicted_yield": 179.10300000000004,
+              "yield_unit": "bu/acre",
+              "model_version": "random-forest-export-version-unspecified",
+              "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+              "source_file": "corn_with_predictions.csv",
+              "source_row": 1967,
+              "yield_basis": "ml_prediction",
+              "historical_year": 2020,
+              "observed_yield": 166.2
+            },
+            "yield_bu_per_harvested_acre": 179.10300000000004,
+            "annual_margin_usd_per_acre": -252.7752099999998,
+            "rainfed_shortfall_mm": 34.88134099999998
+          },
+          {
+            "crop": "corn",
+            "harvest_year": 2027,
+            "historical_year": 2021,
+            "yield_basis": "ml_prediction",
+            "prediction_provenance": {
+              "county_fips": "20005",
+              "crop": "corn",
+              "harvest_year": 2021,
+              "scenario_id": "historical-export",
+              "predicted_yield": 165.36900000000006,
+              "yield_unit": "bu/acre",
+              "model_version": "random-forest-export-version-unspecified",
+              "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+              "source_file": "corn_with_predictions.csv",
+              "source_row": 1968,
+              "yield_basis": "ml_prediction",
+              "historical_year": 2021,
+              "observed_yield": 159.5
+            },
+            "yield_bu_per_harvested_acre": 165.36900000000006,
+            "annual_margin_usd_per_acre": -306.74982999999975,
+            "rainfed_shortfall_mm": 179.6576375
+          }
+        ],
+        "annual_margin_usd_per_acre": -279.76251999999977,
+        "rainfed_shortfall_mm": 214.53897849999998
+      },
+      {
+        "historical_years": [
+          2021,
+          2022
+        ],
+        "seasons": [
+          {
+            "crop": "corn",
+            "harvest_year": 2026,
+            "historical_year": 2021,
+            "yield_basis": "ml_prediction",
+            "prediction_provenance": {
+              "county_fips": "20005",
+              "crop": "corn",
+              "harvest_year": 2021,
+              "scenario_id": "historical-export",
+              "predicted_yield": 165.36900000000006,
+              "yield_unit": "bu/acre",
+              "model_version": "random-forest-export-version-unspecified",
+              "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+              "source_file": "corn_with_predictions.csv",
+              "source_row": 1968,
+              "yield_basis": "ml_prediction",
+              "historical_year": 2021,
+              "observed_yield": 159.5
+            },
+            "yield_bu_per_harvested_acre": 165.36900000000006,
+            "annual_margin_usd_per_acre": -306.74982999999975,
+            "rainfed_shortfall_mm": 179.6576375
+          },
+          {
+            "crop": "corn",
+            "harvest_year": 2027,
+            "historical_year": 2022,
+            "yield_basis": "ml_prediction",
+            "prediction_provenance": {
+              "county_fips": "20005",
+              "crop": "corn",
+              "harvest_year": 2022,
+              "scenario_id": "historical-export",
+              "predicted_yield": 156.56399999999982,
+              "yield_unit": "bu/acre",
+              "model_version": "random-forest-export-version-unspecified",
+              "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+              "source_file": "corn_with_predictions.csv",
+              "source_row": 1969,
+              "yield_basis": "ml_prediction",
+              "historical_year": 2022,
+              "observed_yield": 145.4
+            },
+            "yield_bu_per_harvested_acre": 156.56399999999982,
+            "annual_margin_usd_per_acre": -341.3534800000007,
+            "rainfed_shortfall_mm": 270.17353249999996
+          }
+        ],
+        "annual_margin_usd_per_acre": -324.0516550000002,
+        "rainfed_shortfall_mm": 449.83116999999993
+      },
+      {
+        "historical_years": [
+          2022,
+          2023
+        ],
+        "seasons": [
+          {
+            "crop": "corn",
+            "harvest_year": 2026,
+            "historical_year": 2022,
+            "yield_basis": "ml_prediction",
+            "prediction_provenance": {
+              "county_fips": "20005",
+              "crop": "corn",
+              "harvest_year": 2022,
+              "scenario_id": "historical-export",
+              "predicted_yield": 156.56399999999982,
+              "yield_unit": "bu/acre",
+              "model_version": "random-forest-export-version-unspecified",
+              "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+              "source_file": "corn_with_predictions.csv",
+              "source_row": 1969,
+              "yield_basis": "ml_prediction",
+              "historical_year": 2022,
+              "observed_yield": 145.4
+            },
+            "yield_bu_per_harvested_acre": 156.56399999999982,
+            "annual_margin_usd_per_acre": -341.3534800000007,
+            "rainfed_shortfall_mm": 270.17353249999996
+          },
+          {
+            "crop": "corn",
+            "harvest_year": 2027,
+            "historical_year": 2023,
+            "yield_basis": "ml_prediction",
+            "prediction_provenance": {
+              "county_fips": "20005",
+              "crop": "corn",
+              "harvest_year": 2023,
+              "scenario_id": "historical-export",
+              "predicted_yield": 172.6130000000002,
+              "yield_unit": "bu/acre",
+              "model_version": "random-forest-export-version-unspecified",
+              "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+              "source_file": "corn_with_predictions.csv",
+              "source_row": 1970,
+              "yield_basis": "ml_prediction",
+              "historical_year": 2023,
+              "observed_yield": 183.2
+            },
+            "yield_bu_per_harvested_acre": 172.6130000000002,
+            "annual_margin_usd_per_acre": -278.28090999999915,
+            "rainfed_shortfall_mm": 220.88412549999993
+          }
+        ],
+        "annual_margin_usd_per_acre": -309.8171949999999,
+        "rainfed_shortfall_mm": 491.0576579999999
+      },
+      {
+        "historical_years": [
+          2023,
+          2024
+        ],
+        "seasons": [
+          {
+            "crop": "corn",
+            "harvest_year": 2026,
+            "historical_year": 2023,
+            "yield_basis": "ml_prediction",
+            "prediction_provenance": {
+              "county_fips": "20005",
+              "crop": "corn",
+              "harvest_year": 2023,
+              "scenario_id": "historical-export",
+              "predicted_yield": 172.6130000000002,
+              "yield_unit": "bu/acre",
+              "model_version": "random-forest-export-version-unspecified",
+              "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+              "source_file": "corn_with_predictions.csv",
+              "source_row": 1970,
+              "yield_basis": "ml_prediction",
+              "historical_year": 2023,
+              "observed_yield": 183.2
+            },
+            "yield_bu_per_harvested_acre": 172.6130000000002,
+            "annual_margin_usd_per_acre": -278.28090999999915,
+            "rainfed_shortfall_mm": 220.88412549999993
+          },
+          {
+            "crop": "corn",
+            "harvest_year": 2027,
+            "historical_year": 2024,
+            "yield_basis": "ml_prediction",
+            "prediction_provenance": {
+              "county_fips": "20005",
+              "crop": "corn",
+              "harvest_year": 2024,
+              "scenario_id": "historical-export",
+              "predicted_yield": 184.97999999999996,
+              "yield_unit": "bu/acre",
+              "model_version": "random-forest-export-version-unspecified",
+              "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+              "source_file": "corn_with_predictions.csv",
+              "source_row": 1971,
+              "yield_basis": "ml_prediction",
+              "historical_year": 2024,
+              "observed_yield": 195.9
+            },
+            "yield_bu_per_harvested_acre": 184.97999999999996,
+            "annual_margin_usd_per_acre": -229.67860000000007,
+            "rainfed_shortfall_mm": 146.94896400000002
+          }
+        ],
+        "annual_margin_usd_per_acre": -253.9797549999996,
+        "rainfed_shortfall_mm": 367.8330894999999
+      }
+    ],
+    "score": 24.0194009451,
+    "score_delta_vs_baseline": 0,
+    "explanation": "Your plan evaluated across historical weather pairs using the returned planning budget assumptions."
+  },
+  "rotations": [
+    {
+      "id": "corn-soybeans",
+      "is_baseline": false,
+      "seasons": [
+        {
+          "crop": "corn",
+          "harvest_year": 2026
+        },
+        {
+          "crop": "soybeans",
+          "harvest_year": 2027
+        }
+      ],
+      "meets_crop_family_filter": true,
+      "heat_status": "passed",
+      "annual_margin_usd_per_acre": -256.43852875,
+      "rainfed_shortfall_mm": 363.5202939821428,
+      "margin_range_usd_per_acre": [
+        -295.57790000000045,
+        -219.61268500000017
+      ],
+      "shortfall_range_mm": [
+        213.9597958571428,
+        475.1772822142857
+      ],
+      "scenario_count": 4,
+      "scenarios": [
+        {
+          "historical_years": [
+            2020,
+            2021
+          ],
+          "seasons": [
+            {
+              "crop": "corn",
+              "harvest_year": 2026,
+              "historical_year": 2020,
+              "yield_basis": "ml_prediction",
+              "prediction_provenance": {
+                "county_fips": "20005",
+                "crop": "corn",
+                "harvest_year": 2020,
+                "scenario_id": "historical-export",
+                "predicted_yield": 179.10300000000004,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+                "source_file": "corn_with_predictions.csv",
+                "source_row": 1967,
+                "yield_basis": "ml_prediction",
+                "historical_year": 2020,
+                "observed_yield": 166.2
+              },
+              "yield_bu_per_harvested_acre": 179.10300000000004,
+              "annual_margin_usd_per_acre": -252.7752099999998,
+              "rainfed_shortfall_mm": 34.88134099999998
+            },
+            {
+              "crop": "soybeans",
+              "harvest_year": 2027,
+              "historical_year": 2021,
+              "yield_basis": "ml_prediction",
+              "prediction_provenance": {
+                "county_fips": "20005",
+                "crop": "soybeans",
+                "harvest_year": 2021,
+                "scenario_id": "historical-export",
+                "predicted_yield": 51.58399999999994,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+                "source_file": "soybeans_with_predictions.csv",
+                "source_row": 1611,
+                "yield_basis": "ml_prediction",
+                "historical_year": 2021,
+                "observed_yield": 53.7
+              },
+              "yield_bu_per_harvested_acre": 51.58399999999994,
+              "annual_margin_usd_per_acre": -186.45016000000055,
+              "rainfed_shortfall_mm": 179.07845485714284
+            }
+          ],
+          "annual_margin_usd_per_acre": -219.61268500000017,
+          "rainfed_shortfall_mm": 213.9597958571428
+        },
+        {
+          "historical_years": [
+            2021,
+            2022
+          ],
+          "seasons": [
+            {
+              "crop": "corn",
+              "harvest_year": 2026,
+              "historical_year": 2021,
+              "yield_basis": "ml_prediction",
+              "prediction_provenance": {
+                "county_fips": "20005",
+                "crop": "corn",
+                "harvest_year": 2021,
+                "scenario_id": "historical-export",
+                "predicted_yield": 165.36900000000006,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+                "source_file": "corn_with_predictions.csv",
+                "source_row": 1968,
+                "yield_basis": "ml_prediction",
+                "historical_year": 2021,
+                "observed_yield": 159.5
+              },
+              "yield_bu_per_harvested_acre": 165.36900000000006,
+              "annual_margin_usd_per_acre": -306.74982999999975,
+              "rainfed_shortfall_mm": 179.6576375
+            },
+            {
+              "crop": "soybeans",
+              "harvest_year": 2027,
+              "historical_year": 2022,
+              "yield_basis": "ml_prediction",
+              "prediction_provenance": {
+                "county_fips": "20005",
+                "crop": "soybeans",
+                "harvest_year": 2022,
+                "scenario_id": "historical-export",
+                "predicted_yield": 45.86000000000004,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+                "source_file": "soybeans_with_predictions.csv",
+                "source_row": 1612,
+                "yield_basis": "ml_prediction",
+                "historical_year": 2022,
+                "observed_yield": 44.3
+              },
+              "yield_bu_per_harvested_acre": 45.86000000000004,
+              "annual_margin_usd_per_acre": -242.3163999999996,
+              "rainfed_shortfall_mm": 246.95293085714283
+            }
+          ],
+          "annual_margin_usd_per_acre": -274.53311499999967,
+          "rainfed_shortfall_mm": 426.6105683571428
+        },
+        {
+          "historical_years": [
+            2022,
+            2023
+          ],
+          "seasons": [
+            {
+              "crop": "corn",
+              "harvest_year": 2026,
+              "historical_year": 2022,
+              "yield_basis": "ml_prediction",
+              "prediction_provenance": {
+                "county_fips": "20005",
+                "crop": "corn",
+                "harvest_year": 2022,
+                "scenario_id": "historical-export",
+                "predicted_yield": 156.56399999999982,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+                "source_file": "corn_with_predictions.csv",
+                "source_row": 1969,
+                "yield_basis": "ml_prediction",
+                "historical_year": 2022,
+                "observed_yield": 145.4
+              },
+              "yield_bu_per_harvested_acre": 156.56399999999982,
+              "annual_margin_usd_per_acre": -341.3534800000007,
+              "rainfed_shortfall_mm": 270.17353249999996
+            },
+            {
+              "crop": "soybeans",
+              "harvest_year": 2027,
+              "historical_year": 2023,
+              "yield_basis": "ml_prediction",
+              "prediction_provenance": {
+                "county_fips": "20005",
+                "crop": "soybeans",
+                "harvest_year": 2023,
+                "scenario_id": "historical-export",
+                "predicted_yield": 45.09299999999998,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+                "source_file": "soybeans_with_predictions.csv",
+                "source_row": 1613,
+                "yield_basis": "ml_prediction",
+                "historical_year": 2023,
+                "observed_yield": 50.7
+              },
+              "yield_bu_per_harvested_acre": 45.09299999999998,
+              "annual_margin_usd_per_acre": -249.80232000000018,
+              "rainfed_shortfall_mm": 205.0037497142857
+            }
+          ],
+          "annual_margin_usd_per_acre": -295.57790000000045,
+          "rainfed_shortfall_mm": 475.1772822142857
+        },
+        {
+          "historical_years": [
+            2023,
+            2024
+          ],
+          "seasons": [
+            {
+              "crop": "corn",
+              "harvest_year": 2026,
+              "historical_year": 2023,
+              "yield_basis": "ml_prediction",
+              "prediction_provenance": {
+                "county_fips": "20005",
+                "crop": "corn",
+                "harvest_year": 2023,
+                "scenario_id": "historical-export",
+                "predicted_yield": 172.6130000000002,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+                "source_file": "corn_with_predictions.csv",
+                "source_row": 1970,
+                "yield_basis": "ml_prediction",
+                "historical_year": 2023,
+                "observed_yield": 183.2
+              },
+              "yield_bu_per_harvested_acre": 172.6130000000002,
+              "annual_margin_usd_per_acre": -278.28090999999915,
+              "rainfed_shortfall_mm": 220.88412549999993
+            },
+            {
+              "crop": "soybeans",
+              "harvest_year": 2027,
+              "historical_year": 2024,
+              "yield_basis": "ml_prediction",
+              "prediction_provenance": {
+                "county_fips": "20005",
+                "crop": "soybeans",
+                "harvest_year": 2024,
+                "scenario_id": "historical-export",
+                "predicted_yield": 50.83299999999999,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+                "source_file": "soybeans_with_predictions.csv",
+                "source_row": 1614,
+                "yield_basis": "ml_prediction",
+                "historical_year": 2024,
+                "observed_yield": 53.5
+              },
+              "yield_bu_per_harvested_acre": 50.83299999999999,
+              "annual_margin_usd_per_acre": -193.77992000000006,
+              "rainfed_shortfall_mm": 117.44940399999997
+            }
+          ],
+          "annual_margin_usd_per_acre": -236.0304149999996,
+          "rainfed_shortfall_mm": 338.3335294999999
+        }
+      ],
+      "score": 92.4854904569,
+      "rank": 1,
+      "score_delta_vs_baseline": 68.4660895118,
+      "explanation": "Across historical scenarios: $35.4643 more margin per acre per year, with 17.2949 mm less rainfed shortfall over two years."
+    },
+    {
+      "id": "soybeans-corn",
+      "is_baseline": false,
+      "seasons": [
+        {
+          "crop": "soybeans",
+          "harvest_year": 2026
+        },
+        {
+          "crop": "corn",
+          "harvest_year": 2027
+        }
+      ],
+      "meets_crop_family_filter": true,
+      "heat_status": "passed",
+      "annual_margin_usd_per_acre": -246.74263249999998,
+      "rainfed_shortfall_mm": 390.9520660178571,
+      "margin_range_usd_per_acre": [
+        -263.9018200000006,
+        -223.0295949999998
+      ],
+      "shortfall_range_mm": [
+        294.76650664285717,
+        467.8370563571427
+      ],
+      "scenario_count": 4,
+      "scenarios": [
+        {
+          "historical_years": [
+            2020,
+            2021
+          ],
+          "seasons": [
+            {
+              "crop": "soybeans",
+              "harvest_year": 2026,
+              "historical_year": 2020,
+              "yield_basis": "ml_prediction",
+              "prediction_provenance": {
+                "county_fips": "20005",
+                "crop": "soybeans",
+                "harvest_year": 2020,
+                "scenario_id": "historical-export",
+                "predicted_yield": 56.414000000000016,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+                "source_file": "soybeans_with_predictions.csv",
+                "source_row": 1610,
+                "yield_basis": "ml_prediction",
+                "historical_year": 2020,
+                "observed_yield": 49.4
+              },
+              "yield_bu_per_harvested_acre": 56.414000000000016,
+              "annual_margin_usd_per_acre": -139.30935999999986,
+              "rainfed_shortfall_mm": 115.10886914285717
+            },
+            {
+              "crop": "corn",
+              "harvest_year": 2027,
+              "historical_year": 2021,
+              "yield_basis": "ml_prediction",
+              "prediction_provenance": {
+                "county_fips": "20005",
+                "crop": "corn",
+                "harvest_year": 2021,
+                "scenario_id": "historical-export",
+                "predicted_yield": 165.36900000000006,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+                "source_file": "corn_with_predictions.csv",
+                "source_row": 1968,
+                "yield_basis": "ml_prediction",
+                "historical_year": 2021,
+                "observed_yield": 159.5
+              },
+              "yield_bu_per_harvested_acre": 165.36900000000006,
+              "annual_margin_usd_per_acre": -306.74982999999975,
+              "rainfed_shortfall_mm": 179.6576375
+            }
+          ],
+          "annual_margin_usd_per_acre": -223.0295949999998,
+          "rainfed_shortfall_mm": 294.76650664285717
+        },
+        {
+          "historical_years": [
+            2021,
+            2022
+          ],
+          "seasons": [
+            {
+              "crop": "soybeans",
+              "harvest_year": 2026,
+              "historical_year": 2021,
+              "yield_basis": "ml_prediction",
+              "prediction_provenance": {
+                "county_fips": "20005",
+                "crop": "soybeans",
+                "harvest_year": 2021,
+                "scenario_id": "historical-export",
+                "predicted_yield": 51.58399999999994,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+                "source_file": "soybeans_with_predictions.csv",
+                "source_row": 1611,
+                "yield_basis": "ml_prediction",
+                "historical_year": 2021,
+                "observed_yield": 53.7
+              },
+              "yield_bu_per_harvested_acre": 51.58399999999994,
+              "annual_margin_usd_per_acre": -186.45016000000055,
+              "rainfed_shortfall_mm": 179.07845485714284
+            },
+            {
+              "crop": "corn",
+              "harvest_year": 2027,
+              "historical_year": 2022,
+              "yield_basis": "ml_prediction",
+              "prediction_provenance": {
+                "county_fips": "20005",
+                "crop": "corn",
+                "harvest_year": 2022,
+                "scenario_id": "historical-export",
+                "predicted_yield": 156.56399999999982,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+                "source_file": "corn_with_predictions.csv",
+                "source_row": 1969,
+                "yield_basis": "ml_prediction",
+                "historical_year": 2022,
+                "observed_yield": 145.4
+              },
+              "yield_bu_per_harvested_acre": 156.56399999999982,
+              "annual_margin_usd_per_acre": -341.3534800000007,
+              "rainfed_shortfall_mm": 270.17353249999996
+            }
+          ],
+          "annual_margin_usd_per_acre": -263.9018200000006,
+          "rainfed_shortfall_mm": 449.2519873571428
+        },
+        {
+          "historical_years": [
+            2022,
+            2023
+          ],
+          "seasons": [
+            {
+              "crop": "soybeans",
+              "harvest_year": 2026,
+              "historical_year": 2022,
+              "yield_basis": "ml_prediction",
+              "prediction_provenance": {
+                "county_fips": "20005",
+                "crop": "soybeans",
+                "harvest_year": 2022,
+                "scenario_id": "historical-export",
+                "predicted_yield": 45.86000000000004,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+                "source_file": "soybeans_with_predictions.csv",
+                "source_row": 1612,
+                "yield_basis": "ml_prediction",
+                "historical_year": 2022,
+                "observed_yield": 44.3
+              },
+              "yield_bu_per_harvested_acre": 45.86000000000004,
+              "annual_margin_usd_per_acre": -242.3163999999996,
+              "rainfed_shortfall_mm": 246.95293085714283
+            },
+            {
+              "crop": "corn",
+              "harvest_year": 2027,
+              "historical_year": 2023,
+              "yield_basis": "ml_prediction",
+              "prediction_provenance": {
+                "county_fips": "20005",
+                "crop": "corn",
+                "harvest_year": 2023,
+                "scenario_id": "historical-export",
+                "predicted_yield": 172.6130000000002,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+                "source_file": "corn_with_predictions.csv",
+                "source_row": 1970,
+                "yield_basis": "ml_prediction",
+                "historical_year": 2023,
+                "observed_yield": 183.2
+              },
+              "yield_bu_per_harvested_acre": 172.6130000000002,
+              "annual_margin_usd_per_acre": -278.28090999999915,
+              "rainfed_shortfall_mm": 220.88412549999993
+            }
+          ],
+          "annual_margin_usd_per_acre": -260.29865499999937,
+          "rainfed_shortfall_mm": 467.8370563571427
+        },
+        {
+          "historical_years": [
+            2023,
+            2024
+          ],
+          "seasons": [
+            {
+              "crop": "soybeans",
+              "harvest_year": 2026,
+              "historical_year": 2023,
+              "yield_basis": "ml_prediction",
+              "prediction_provenance": {
+                "county_fips": "20005",
+                "crop": "soybeans",
+                "harvest_year": 2023,
+                "scenario_id": "historical-export",
+                "predicted_yield": 45.09299999999998,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+                "source_file": "soybeans_with_predictions.csv",
+                "source_row": 1613,
+                "yield_basis": "ml_prediction",
+                "historical_year": 2023,
+                "observed_yield": 50.7
+              },
+              "yield_bu_per_harvested_acre": 45.09299999999998,
+              "annual_margin_usd_per_acre": -249.80232000000018,
+              "rainfed_shortfall_mm": 205.0037497142857
+            },
+            {
+              "crop": "corn",
+              "harvest_year": 2027,
+              "historical_year": 2024,
+              "yield_basis": "ml_prediction",
+              "prediction_provenance": {
+                "county_fips": "20005",
+                "crop": "corn",
+                "harvest_year": 2024,
+                "scenario_id": "historical-export",
+                "predicted_yield": 184.97999999999996,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
+                "source_file": "corn_with_predictions.csv",
+                "source_row": 1971,
+                "yield_basis": "ml_prediction",
+                "historical_year": 2024,
+                "observed_yield": 195.9
+              },
+              "yield_bu_per_harvested_acre": 184.97999999999996,
+              "annual_margin_usd_per_acre": -229.67860000000007,
+              "rainfed_shortfall_mm": 146.94896400000002
+            }
+          ],
+          "annual_margin_usd_per_acre": -239.74046000000013,
+          "rainfed_shortfall_mm": 351.9527137142857
+        }
+      ],
+      "score": 35.0,
+      "rank": 2,
+      "score_delta_vs_baseline": 10.9805990549,
+      "explanation": "Across historical scenarios: $45.1601 more margin per acre per year, with 10.1368 mm more rainfed shortfall over two years."
+    }
+  ],
+  "unranked": [],
+  "historical_pairs": [
+    [
+      2020,
+      2021
+    ],
+    [
+      2021,
+      2022
+    ],
+    [
+      2022,
+      2023
+    ],
+    [
+      2023,
+      2024
+    ]
+  ],
+  "excluded_pairs": [],
+  "applied_weights": {
+    "margin": 0.35,
+    "lower_rainfed_shortfall": 0.65
+  },
+  "applied_filters": {
+    "require_crop_family_change": true
+  },
+  "budgets_by_year": {
+    "2026": {
+      "corn": {
+        "price_usd_per_bu": 3.93,
+        "cost_usd_per_acre": 956.65
+      },
+      "soybeans": {
+        "price_usd_per_bu": 9.76,
+        "cost_usd_per_acre": 689.91
+      }
+    },
+    "2027": {
+      "corn": {
+        "price_usd_per_bu": 3.93,
+        "cost_usd_per_acre": 956.65
+      },
+      "soybeans": {
+        "price_usd_per_bu": 9.76,
+        "cost_usd_per_acre": 689.91
+      }
+    }
+  },
+  "economics_assumptions": "2025 national prices with compiled Atchison County 2026 regional cost proxies; the same assumptions are held constant for 2027 without inflation adjustment.",
+  "margin_calculation": "custom_budget",
+  "yield_basis": "ml_prediction",
+  "model_metadata": {
+    "yield_unit": "bu/acre",
+    "model_family": "random_forest",
+    "model_version": null,
+    "evaluation_split": "Current training source uses a random holdout; exported training membership is unavailable",
+    "unit_basis": "Observed export yields matched compiled bu/harvested-acre columns for each included row"
+  },
+  "assumptions": [
+    "Random forest estimates on historical inputs; export training membership and evaluation split are unconfirmed.",
+    "Average scenario outcomes before score normalization; scenarios have equal weights.",
+    "Overlapping historical pairs are dependent; reported ranges are scenario ranges.",
+    "Water uses fixed root depth, zero irrigation and independent planting-day initialization each season.",
+    "Upper-Kc daily shortfall is prepared separately for each historical crop-year.",
+    "Supplied budgets assume harvested area equals planted area.",
+    "No previous-crop yield adjustment or causal rotation effect is modeled."
+  ]
+}
