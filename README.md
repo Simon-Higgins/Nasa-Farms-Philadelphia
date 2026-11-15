@@ -48,4 +48,24 @@ The results of the models were:
 
 As Random Forest performed the best we ran our entire original training datasets through the RandomForestRegressor in order to come up with a predicted yield for every year and every county for our three crops.
 
+AI USAGE
+
+Given this was a 48 hour hackathon and AI/SI usage was encouraged we used SI quite a bit, most of our data aggregation and data loading scripts were made either partially or entirely with chatgpt, the training of the models was not done with any substantial amount of gpt usage however
+
+Scripts with heavy ai usage
+
+loadcdls.py
+cld_with_yields_cleanup.py
+merge_cdls_to_yields.py
+pivot_yields.py
+training_data_files_generation.py
+
+Scripts with minimal AI usage
+
+linear_reg.py
+neural_net.py
+random_forest.py
+nasa_data_merge.py
+
+
 
