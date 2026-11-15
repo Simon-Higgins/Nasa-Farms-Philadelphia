@@ -1,0 +1,38 @@
+{
+  "county_fips": "20001",
+  "first_harvest_year": 2026,
+  "horizon_years": 2,
+  "baseline_rotation": [
+    "corn",
+    "corn"
+  ],
+  "require_crop_family_change": true,
+  "weights": {
+    "margin": 0.35,
+    "lower_rainfed_shortfall": 0.65
+  },
+  "budgets_by_year": {
+    "2026": {
+      "corn": {
+        "price_usd_per_bu": 3.93,
+        "cost_usd_per_acre": 789.28
+      },
+      "soybeans": {
+        "price_usd_per_bu": 9.76,
+        "cost_usd_per_acre": 627.54
+      }
+    },
+    "2027": {
+      "corn": {
+        "price_usd_per_bu": 3.93,
+        "cost_usd_per_acre": 789.28
+      },
+      "soybeans": {
+        "price_usd_per_bu": 9.76,
+        "cost_usd_per_acre": 627.54
+      }
+    }
+  },
+  "economics_assumptions": "2025 national prices and regional cost proxies held constant for 2026 and 2027, without inflation adjustment.",
+  "yield_basis": "ml_prediction"
+}
