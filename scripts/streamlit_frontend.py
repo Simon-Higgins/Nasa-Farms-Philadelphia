@@ -171,23 +171,35 @@ def get_ideal_rotations_from_backend(fips, first_harvest, planned_rotation, requ
     c1_raw, c2_raw = [c.strip() for c in planned_rotation.split("->")]
     margin_w = round(margin_weight / 100.0, 2)
     shortfall_w = round((100 - margin_weight) / 100.0, 2)
+    y1 = str(int(first_harvest))
+    y2 = str(int(first_harvest) + 1)
+
+    default_budgets = {
+        "corn": {"price_usd_per_bu": 3.93, "cost_usd_per_acre": 789.28},
+        "soybeans": {"price_usd_per_bu": 9.76, "cost_usd_per_acre": 627.54},
+    }
 
     payload = {
         "county_fips": str(fips).zfill(5),
         "first_harvest_year": int(first_harvest),
         "horizon_years": 2,
+        "baseline_rotation": [to_crop_slug(c1_raw), to_crop_slug(c2_raw)],
+        "require_crop_family_change": bool(require_family_change),
         "weights": {
             "margin": margin_w,
             "lower_rainfed_shortfall": shortfall_w,
         },
-        "require_crop_family_change": bool(require_family_change),
-        "baseline_rotation": [to_crop_slug(c1_raw), to_crop_slug(c2_raw)],
-        "data_mode": "historical",
+        "budgets_by_year": {
+            y1: default_budgets,
+            y2: default_budgets,
+        },
+        "economics_assumptions": "2025 national prices and regional cost proxies held constant for 2026 and 2027, without inflation adjustment.",
+        "yield_basis": "ml_prediction",
     }
 
     try:
         resp = requests.post(
-            "http://" + "127.0.0.1:8000/api/v1/rotations/compare",
+            "http://" + "127.0.0.1:8000/api/v1/planning/compare",
             json=payload,
             timeout=5,
         )
@@ -203,7 +215,7 @@ def get_ideal_rotations_from_backend(fips, first_harvest, planned_rotation, requ
                 "annual_margin_usd_per_acre": 145,
                 "rainfed_shortfall_mm": 70,
                 "score": 0.0,
-                "explanation": "Your current rotation.",
+                "explanation": "Offline fallback (start backend server for live ML results).",
             },
             "rotations": [
                 {
@@ -216,18 +228,7 @@ def get_ideal_rotations_from_backend(fips, first_harvest, planned_rotation, requ
                     "score": 70.0,
                     "rank": 1,
                     "explanation": "Compared with the baseline: $5 more margin per acre per year, with 30 mm less rainfed shortfall over two years.",
-                },
-                {
-                    "seasons": [
-                        {"harvest_year": int(first_harvest), "crop": "sorghum"},
-                        {"harvest_year": int(first_harvest) + 1, "crop": "soybeans"},
-                    ],
-                    "annual_margin_usd_per_acre": 165,
-                    "rainfed_shortfall_mm": 50,
-                    "score": 63.33,
-                    "rank": 2,
-                    "explanation": "Compared with the baseline: $20 more margin per acre per year, with 20 mm less rainfed shortfall over two years.",
-                },
+                }
             ],
         }
 # TOP BANNER
@@ -248,7 +249,7 @@ with left_col:
 
     selected_county = st.selectbox("County", options=county_names, index=default_idx, placeholder="type or select your county name")
     selected_fips = county_to_fips[selected_county]
-    first_harvest = st.selectbox("First harvest", options=list(range(2024, 2036)), index=0)
+    first_harvest = st.selectbox("First harvest", options=list(range(2026, 2036)), index=0)
     planned_rotation = st.selectbox("Your planned rotation", options=ALL_ROTATIONS, index=0)
     require_family_change = st.checkbox("Requires a crop-family change", value=True)
 
@@ -256,28 +257,38 @@ with left_col:
     margin_weight = st.slider("Priority balance", min_value=0, max_value=100, value=35, label_visibility="collapsed")
     shortfall_weight = 100 - margin_weight
 
-    w1, w2 = st.columns(2)
-    with w1:
-        st.caption(f"**Higher margin: {margin_weight}%**")
-    with w2:
-        st.markdown(f"<div style='text-align: right; font-size: 12px; color: #555;'>Lower rainfall shortfall: <b>{shortfall_weight}%</b></div>", unsafe_allow_html=True)
-
+    st.markdown(
+        f"<div style='display: flex; justify-content: space-between; font-size: 13px; color: #4A4E4D; margin-top: -6px;'>"
+        f"<span>Higher margin: <b>{margin_weight}%</b></span>"
+        f"<span style='text-align: right;'>Lower rainfall shortfall: <b>{shortfall_weight}%</b></span>"
+        f"</div>",
+        unsafe_allow_html=True,
+    )
+ 
     st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
-    if st.button("Compare rotations"):
-        st.session_state["compare_triggered"] = True
+    compare_clicked = st.button("Compare rotations")
 
 with right_col:
-    api_data = get_ideal_rotations_from_backend(selected_fips, first_harvest, planned_rotation, require_family_change, margin_weight)
+    if compare_clicked or "api_data" not in st.session_state:
+        with st.spinner("Comparing crop rotations..."):
+            st.session_state["api_data"] = get_ideal_rotations_from_backend(
+                selected_fips,
+                first_harvest,
+                planned_rotation,
+                require_family_change,
+                margin_weight,
+            )
+
+    api_data = st.session_state["api_data"]
     base = api_data.get("baseline", {})
     base_crops = [format_crop_title(s.get("crop", "")) for s in base.get("seasons", [])]
     base_name = " -> ".join(base_crops) if base_crops else planned_rotation
     base_margin = base.get("annual_margin_usd_per_acre")
     base_shortfall = base.get("rainfed_shortfall_mm")
+    margin_disp = f"${float(base_margin):,.2f}/ac/yr" if base_margin is not None else "Margin N/A"
+    shortfall_disp = f"{float(base_shortfall):,.1f} mm shortfall" if base_shortfall is not None else "Shortfall N/A"
     base_score_str = format_score(base.get("score"), decimals=0)
     base_note = base.get("explanation") or "Your current rotation."
-
-    margin_disp = f"${base_margin}/ac/yr" if base_margin is not None else "Margin N/A"
-    shortfall_disp = f"{base_shortfall} mm shortfall" if base_shortfall is not None else "Shortfall N/A"
 
     st.markdown(
         f'<div class="baseline-card"><div>'
@@ -302,8 +313,8 @@ with right_col:
         for idx, rot in enumerate(rotations):
             r_crops = [format_crop_title(s.get("crop", "")) for s in rot.get("seasons", [])]
             r_name = " -> ".join(r_crops)
-            r_margin = f"${rot['annual_margin_usd_per_acre']}/ac/yr" if rot.get("annual_margin_usd_per_acre") is not None else "N/A"
-            r_shortfall = f"{rot['rainfed_shortfall_mm']} mm" if rot.get("rainfed_shortfall_mm") is not None else "N/A"
+            r_margin = f"${float(rot['annual_margin_usd_per_acre']):,.2f}/ac/yr" if rot.get("annual_margin_usd_per_acre") is not None else "N/A"
+            r_shortfall = f"{float(rot['rainfed_shortfall_mm']):,.1f} mm" if rot.get("rainfed_shortfall_mm") is not None else "N/A"
             r_score = format_score(rot.get("score"), decimals=1)
             row_class = "alt-row-active" if idx == 0 else "alt-row"
             badge = "* " if idx == 0 else ""
