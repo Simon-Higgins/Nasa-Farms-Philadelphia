@@ -135,8 +135,6 @@ def get_us_counties_with_fips():
         "state_and_county_fips_master.csv"
       )
 
-        )
-
         df = pd.read_csv(counties_url, dtype={"fips": str})
         df = df.dropna(subset=["state", "fips"])
         df["fips"] = df["fips"].str.strip().str.zfill(5)
@@ -319,12 +317,12 @@ with right_col:
                 unsafe_allow_html=True,
             )
 
-        top_rot = rotations
+        top_rot = rotations[0]
         t_seasons = top_rot.get("seasons", [])
-        c1_name = format_crop_title(t_seasons.get("crop", "")) if len(t_seasons) > 0 else "Crop 1"
-        c2_name = format_crop_title(t_seasons.get("crop", "")) if len(t_seasons) > 1 else "Crop 2"
-        y1_val = t_seasons.get("harvest_year", first_harvest) if len(t_seasons) > 0 else first_harvest
-        y2_val = t_seasons.get("harvest_year", first_harvest + 1) if len(t_seasons) > 1 else first_harvest + 1
+        c1_name = format_crop_title(t_seasons[0].get("crop", "")) if len(t_seasons) > 0 else "Crop 1"
+        c2_name = format_crop_title(t_seasons[1].get("crop", "")) if len(t_seasons) > 1 else "Crop 2"
+        y1_val = t_seasons[0].get("harvest_year", first_harvest) if len(t_seasons) > 0 else first_harvest
+        y2_val = t_seasons[1].get("harvest_year", first_harvest + 1) if len(t_seasons) > 1 else first_harvest + 1
         c1_fam = CROP_FAMILIES.get(c1_name, "Crop")
         c2_fam = CROP_FAMILIES.get(c2_name, "Crop")
         explanation_text = top_rot.get("explanation") or "Comparison summary unavailable."
