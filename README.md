@@ -61,4 +61,14 @@ Scripts with minimal AI usage
 linear_reg.py, neural_net.py, random_forest.py, nasa_data_merge.py
 
 
+BACKEND
+
+
+
+
+
+FRONTEND
+
+
+
 
