@@ -1,4 +1,3 @@
-*.csv
 *.tif
 *.tiff
 *.ovr
@@ -7,7 +6,6 @@
 *.vat.dbf
 
 2024/
-2025/
+2025/*.tfw
 .venv/
 __pycache__/
-

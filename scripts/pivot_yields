@@ -16,7 +16,7 @@ FILES_DIR = BASE / "files"
 INPUT = FILES_DIR / "usda_yields.csv"
 OUTPUT = FILES_DIR / "county_yields_wide.csv"
 
-YEARS = [2024, 2025]
+YEARS = [2019,2020,2021,2022,2023,2024,2025]
 
 if not INPUT.exists():
     raise FileNotFoundError(f"Cannot find input CSV: {INPUT}")
