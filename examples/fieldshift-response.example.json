@@ -1,0 +1,86 @@
+{
+  "data_mode": "demo",
+  "county_fips": "01001",
+  "county_label": "Autauga County, AL",
+  "scenario_label": "Illustrative historical-weather scenario",
+  "sources": [],
+  "baseline": {
+    "id": "corn-corn",
+    "is_baseline": true,
+    "seasons": [
+      {
+        "harvest_year": 2026,
+        "crop": "corn"
+      },
+      {
+        "harvest_year": 2027,
+        "crop": "corn"
+      }
+    ],
+    "annual_margin_usd_per_acre": 145,
+    "rainfed_shortfall_mm": 70,
+    "heat_status": "passed",
+    "margin_normalized": 0.0,
+    "lower_shortfall_normalized": 0.0,
+    "score": 0.0,
+    "explanation": "Your current rotation.",
+    "score_delta_vs_baseline": 0,
+    "meets_crop_family_filter": false
+  },
+  "rotations": [
+    {
+      "id": "soybeans-corn",
+      "is_baseline": false,
+      "seasons": [
+        {
+          "harvest_year": 2026,
+          "crop": "soybeans"
+        },
+        {
+          "harvest_year": 2027,
+          "crop": "corn"
+        }
+      ],
+      "annual_margin_usd_per_acre": 150,
+      "rainfed_shortfall_mm": 40,
+      "heat_status": "passed",
+      "margin_normalized": 0.14285714285714285,
+      "lower_shortfall_normalized": 1.0,
+      "score": 70.0,
+      "rank": 1,
+      "explanation": "Compared with the baseline: $5 more margin per acre per year, with 30 mm less rainfed shortfall over two years.",
+      "score_delta_vs_baseline": 70.0
+    },
+    {
+      "id": "sorghum-soybeans",
+      "is_baseline": false,
+      "seasons": [
+        {
+          "harvest_year": 2026,
+          "crop": "sorghum"
+        },
+        {
+          "harvest_year": 2027,
+          "crop": "soybeans"
+        }
+      ],
+      "annual_margin_usd_per_acre": 165,
+      "rainfed_shortfall_mm": 50,
+      "heat_status": "passed",
+      "margin_normalized": 0.5714285714285714,
+      "lower_shortfall_normalized": 0.6666666666666667,
+      "score": 63.3333333333,
+      "rank": 2,
+      "explanation": "Compared with the baseline: $20 more margin per acre per year, with 20 mm less rainfed shortfall over two years.",
+      "score_delta_vs_baseline": 63.3333333333
+    }
+  ],
+  "unranked": [],
+  "applied_weights": {
+    "margin": 0.35,
+    "lower_rainfed_shortfall": 0.65
+  },
+  "applied_filters": {
+    "require_crop_family_change": true
+  }
+}

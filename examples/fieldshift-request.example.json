@@ -1,0 +1,14 @@
+{
+  "county_fips": "01001",
+  "first_harvest_year": 2026,
+  "horizon_years": 2,
+  "weights": {
+    "margin": 0.35,
+    "lower_rainfed_shortfall": 0.65
+  },
+  "require_crop_family_change": true,
+  "baseline_rotation": [
+    "corn",
+    "corn"
+  ]
+}

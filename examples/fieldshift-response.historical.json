@@ -1,0 +1,147 @@
+{
+  "data_mode": "historical",
+  "county_fips": "20001",
+  "county_label": "Allen County, KS",
+  "scenario_label": "2024\u20132025 historical county scenarios; not a forecast",
+  "baseline": {
+    "id": "corn-corn",
+    "is_baseline": true,
+    "seasons": [
+      {
+        "crop": "corn",
+        "harvest_year": 2024,
+        "annual_margin_usd_per_acre": -261.417,
+        "yield_basis": "observed_county_yield",
+        "heat_status": "passed",
+        "planting_date": "2024-04-15",
+        "rainfed_shortfall_mm": 324.05485400000003,
+        "rainfed_shortfall_lower_mm": 304.553614
+      },
+      {
+        "crop": "corn",
+        "harvest_year": 2025,
+        "annual_margin_usd_per_acre": -180.13,
+        "yield_basis": "observed_county_yield",
+        "heat_status": "passed",
+        "planting_date": "2025-04-15",
+        "rainfed_shortfall_mm": 122.22696250000003,
+        "rainfed_shortfall_lower_mm": 109.11841250000005
+      }
+    ],
+    "meets_crop_family_filter": false,
+    "score": 18.6320467498,
+    "score_delta_vs_baseline": 0,
+    "annual_margin_usd_per_acre": -220.77349999999998,
+    "rainfed_shortfall_mm": 446.28181650000005,
+    "rainfed_shortfall_lower_mm": 413.6720265,
+    "heat_status": "passed",
+    "margin_normalized": 0.529519274010355,
+    "lower_shortfall_normalized": 0.0015211101456776843,
+    "explanation": "Your selected rotation under 2024\u20132025 historical conditions."
+  },
+  "rotations": [
+    {
+      "id": "sorghum-soybeans",
+      "is_baseline": false,
+      "seasons": [
+        {
+          "crop": "sorghum",
+          "harvest_year": 2024,
+          "annual_margin_usd_per_acre": -176.484,
+          "yield_basis": "observed_county_yield",
+          "heat_status": "passed",
+          "planting_date": "2024-05-15",
+          "rainfed_shortfall_mm": 205.06577190476196,
+          "rainfed_shortfall_lower_mm": 162.92278999999996
+        },
+        {
+          "crop": "soybeans",
+          "harvest_year": 2025,
+          "annual_margin_usd_per_acre": -183.46,
+          "yield_basis": "observed_county_yield",
+          "heat_status": "passed",
+          "planting_date": "2025-04-20",
+          "rainfed_shortfall_mm": 122.40795799999998,
+          "rainfed_shortfall_lower_mm": 122.40795799999998
+        }
+      ],
+      "meets_crop_family_filter": true,
+      "score": 100.0,
+      "score_delta_vs_baseline": 81.3679532502,
+      "annual_margin_usd_per_acre": -179.972,
+      "rainfed_shortfall_mm": 327.47372990476197,
+      "rainfed_shortfall_lower_mm": 285.33074799999997,
+      "heat_status": "passed",
+      "margin_normalized": 1.0,
+      "lower_shortfall_normalized": 1.0,
+      "rank": 1,
+      "explanation": "Compared with the baseline: $40.8015 more margin per acre per year, with 118.808 mm less rainfed shortfall over two years."
+    },
+    {
+      "id": "corn-soybeans",
+      "is_baseline": false,
+      "seasons": [
+        {
+          "crop": "corn",
+          "harvest_year": 2024,
+          "annual_margin_usd_per_acre": -261.417,
+          "yield_basis": "observed_county_yield",
+          "heat_status": "passed",
+          "planting_date": "2024-04-15",
+          "rainfed_shortfall_mm": 324.05485400000003,
+          "rainfed_shortfall_lower_mm": 304.553614
+        },
+        {
+          "crop": "soybeans",
+          "harvest_year": 2025,
+          "annual_margin_usd_per_acre": -183.46,
+          "yield_basis": "observed_county_yield",
+          "heat_status": "passed",
+          "planting_date": "2025-04-20",
+          "rainfed_shortfall_mm": 122.40795799999998,
+          "rainfed_shortfall_lower_mm": 122.40795799999998
+        }
+      ],
+      "meets_crop_family_filter": true,
+      "score": 17.8612075228,
+      "score_delta_vs_baseline": -0.770839227,
+      "annual_margin_usd_per_acre": -222.43849999999998,
+      "rainfed_shortfall_mm": 446.462812,
+      "rainfed_shortfall_lower_mm": 426.96157199999993,
+      "heat_status": "passed",
+      "margin_normalized": 0.5103202149372141,
+      "lower_shortfall_normalized": 0.0,
+      "rank": 2,
+      "explanation": "Compared with the baseline: 0.180995 mm more rainfed shortfall over two years, with $1.665 less margin per acre per year."
+    }
+  ],
+  "unranked": [],
+  "applied_weights": {
+    "margin": 0.35,
+    "lower_rainfed_shortfall": 0.65
+  },
+  "applied_filters": {
+    "require_crop_family_change": true
+  },
+  "sources": [
+    "county_corn_gdd_planting_dates_2015_2026.csv",
+    "county_daily_gridmet_precipitation_2015_2026.zip",
+    "county_daily_reference_et_2015_2026.csv",
+    "county_grain_sorghum_gdd_planting_dates_2015_2026.csv",
+    "county_planting_date_smap_and_plant_available_water_2015_2026.csv",
+    "county_soybean_gdd_planting_dates_2015_2026.csv",
+    "crop_characteristics.csv",
+    "crop_prices_us_2015_2025.csv",
+    "nasa_data_merged(simon).csv",
+    "nationwide_county_crop_costs_2015_2026.csv"
+  ],
+  "assumptions": [
+    "Observed county yields, national prices and regional cost proxies; not ML predictions.",
+    "Harvested area assumed equal to planted area; no previous-crop yield or cost adjustment.",
+    "Each year independently initialized from its planting-day SMAP; no inter-year moisture carryover.",
+    "Fixed root depth and zero irrigation; stage calendars are hypothetical, not observed planting dates.",
+    "Scoring uses upper-Kc shortfall consistently; lower-Kc totals are also returned.",
+    "Normalize over complete eligible candidates plus a complete baseline, then return the top two alternatives.",
+    "Candidate library: corn-corn, corn-soybeans, soybeans-corn, sorghum-soybeans, plus selected baseline."
+  ]
+}

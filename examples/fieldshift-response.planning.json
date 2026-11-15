@@ -1,0 +1,343 @@
+{
+  "data_mode": "planning_scenarios",
+  "county_fips": "20001",
+  "county_label": "Allen County, KS",
+  "planning_years": [
+    2026,
+    2027
+  ],
+  "scenario_label": "Equal-weight historical weather pairs with supplied planning budgets",
+  "baseline": {
+    "id": "corn-corn",
+    "is_baseline": true,
+    "seasons": [
+      {
+        "crop": "corn",
+        "harvest_year": 2026
+      },
+      {
+        "crop": "corn",
+        "harvest_year": 2027
+      }
+    ],
+    "meets_crop_family_filter": false,
+    "heat_status": "passed",
+    "annual_margin_usd_per_acre": -290.66124999999994,
+    "rainfed_shortfall_mm": 526.564438,
+    "margin_range_usd_per_acre": [
+      -347.9409999999999,
+      -233.38149999999996
+    ],
+    "shortfall_range_mm": [
+      446.28181650000005,
+      606.8470595
+    ],
+    "scenario_count": 2,
+    "scenarios": [
+      {
+        "historical_years": [
+          2023,
+          2024
+        ],
+        "seasons": [
+          {
+            "crop": "corn",
+            "harvest_year": 2026,
+            "historical_year": 2023,
+            "yield_basis": "observed_county_yield",
+            "prediction_provenance": null,
+            "yield_bu_per_harvested_acre": 96.7,
+            "annual_margin_usd_per_acre": -409.24899999999997,
+            "rainfed_shortfall_mm": 282.79220549999997
+          },
+          {
+            "crop": "corn",
+            "harvest_year": 2027,
+            "historical_year": 2024,
+            "yield_basis": "observed_county_yield",
+            "prediction_provenance": null,
+            "yield_bu_per_harvested_acre": 127.9,
+            "annual_margin_usd_per_acre": -286.6329999999999,
+            "rainfed_shortfall_mm": 324.05485400000003
+          }
+        ],
+        "annual_margin_usd_per_acre": -347.9409999999999,
+        "rainfed_shortfall_mm": 606.8470595
+      },
+      {
+        "historical_years": [
+          2024,
+          2025
+        ],
+        "seasons": [
+          {
+            "crop": "corn",
+            "harvest_year": 2026,
+            "historical_year": 2024,
+            "yield_basis": "observed_county_yield",
+            "prediction_provenance": null,
+            "yield_bu_per_harvested_acre": 127.9,
+            "annual_margin_usd_per_acre": -286.6329999999999,
+            "rainfed_shortfall_mm": 324.05485400000003
+          },
+          {
+            "crop": "corn",
+            "harvest_year": 2027,
+            "historical_year": 2025,
+            "yield_basis": "observed_county_yield",
+            "prediction_provenance": null,
+            "yield_bu_per_harvested_acre": 155.0,
+            "annual_margin_usd_per_acre": -180.13,
+            "rainfed_shortfall_mm": 122.22696250000003
+          }
+        ],
+        "annual_margin_usd_per_acre": -233.38149999999996,
+        "rainfed_shortfall_mm": 446.28181650000005
+      }
+    ],
+    "score": 35.0,
+    "score_delta_vs_baseline": 0,
+    "explanation": "Your plan evaluated across historical weather pairs with supplied planning budgets."
+  },
+  "rotations": [
+    {
+      "id": "soybeans-corn",
+      "is_baseline": false,
+      "seasons": [
+        {
+          "crop": "soybeans",
+          "harvest_year": 2026
+        },
+        {
+          "crop": "corn",
+          "harvest_year": 2027
+        }
+      ],
+      "meets_crop_family_filter": true,
+      "heat_status": "passed",
+      "annual_margin_usd_per_acre": -309.68075,
+      "rainfed_shortfall_mm": 507.78015325,
+      "margin_range_usd_per_acre": [
+        -344.84649999999993,
+        -274.515
+      ],
+      "shortfall_range_mm": [
+        414.7522636428571,
+        600.8080428571429
+      ],
+      "scenario_count": 2,
+      "scenarios": [
+        {
+          "historical_years": [
+            2023,
+            2024
+          ],
+          "seasons": [
+            {
+              "crop": "soybeans",
+              "harvest_year": 2026,
+              "historical_year": 2023,
+              "yield_basis": "observed_county_yield",
+              "prediction_provenance": null,
+              "yield_bu_per_harvested_acre": 23.0,
+              "annual_margin_usd_per_acre": -403.05999999999995,
+              "rainfed_shortfall_mm": 276.75318885714285
+            },
+            {
+              "crop": "corn",
+              "harvest_year": 2027,
+              "historical_year": 2024,
+              "yield_basis": "observed_county_yield",
+              "prediction_provenance": null,
+              "yield_bu_per_harvested_acre": 127.9,
+              "annual_margin_usd_per_acre": -286.6329999999999,
+              "rainfed_shortfall_mm": 324.05485400000003
+            }
+          ],
+          "annual_margin_usd_per_acre": -344.84649999999993,
+          "rainfed_shortfall_mm": 600.8080428571429
+        },
+        {
+          "historical_years": [
+            2024,
+            2025
+          ],
+          "seasons": [
+            {
+              "crop": "soybeans",
+              "harvest_year": 2026,
+              "historical_year": 2024,
+              "yield_basis": "observed_county_yield",
+              "prediction_provenance": null,
+              "yield_bu_per_harvested_acre": 26.5,
+              "annual_margin_usd_per_acre": -368.9,
+              "rainfed_shortfall_mm": 292.5253011428571
+            },
+            {
+              "crop": "corn",
+              "harvest_year": 2027,
+              "historical_year": 2025,
+              "yield_basis": "observed_county_yield",
+              "prediction_provenance": null,
+              "yield_bu_per_harvested_acre": 155.0,
+              "annual_margin_usd_per_acre": -180.13,
+              "rainfed_shortfall_mm": 122.22696250000003
+            }
+          ],
+          "annual_margin_usd_per_acre": -274.515,
+          "rainfed_shortfall_mm": 414.7522636428571
+        }
+      ],
+      "score": 68.8922508966,
+      "rank": 1,
+      "score_delta_vs_baseline": 33.8922508966,
+      "explanation": "Across historical scenarios: 18.7843 mm less rainfed shortfall over two years, with $19.0195 less margin per acre per year."
+    },
+    {
+      "id": "corn-soybeans",
+      "is_baseline": false,
+      "seasons": [
+        {
+          "crop": "corn",
+          "harvest_year": 2026
+        },
+        {
+          "crop": "soybeans",
+          "harvest_year": 2027
+        }
+      ],
+      "meets_crop_family_filter": true,
+      "heat_status": "passed",
+      "annual_margin_usd_per_acre": -312.06049999999993,
+      "rainfed_shortfall_mm": 510.89015932142854,
+      "margin_range_usd_per_acre": [
+        -389.07449999999994,
+        -235.04649999999995
+      ],
+      "shortfall_range_mm": [
+        446.462812,
+        575.3175066428571
+      ],
+      "scenario_count": 2,
+      "scenarios": [
+        {
+          "historical_years": [
+            2023,
+            2024
+          ],
+          "seasons": [
+            {
+              "crop": "corn",
+              "harvest_year": 2026,
+              "historical_year": 2023,
+              "yield_basis": "observed_county_yield",
+              "prediction_provenance": null,
+              "yield_bu_per_harvested_acre": 96.7,
+              "annual_margin_usd_per_acre": -409.24899999999997,
+              "rainfed_shortfall_mm": 282.79220549999997
+            },
+            {
+              "crop": "soybeans",
+              "harvest_year": 2027,
+              "historical_year": 2024,
+              "yield_basis": "observed_county_yield",
+              "prediction_provenance": null,
+              "yield_bu_per_harvested_acre": 26.5,
+              "annual_margin_usd_per_acre": -368.9,
+              "rainfed_shortfall_mm": 292.5253011428571
+            }
+          ],
+          "annual_margin_usd_per_acre": -389.07449999999994,
+          "rainfed_shortfall_mm": 575.3175066428571
+        },
+        {
+          "historical_years": [
+            2024,
+            2025
+          ],
+          "seasons": [
+            {
+              "crop": "corn",
+              "harvest_year": 2026,
+              "historical_year": 2024,
+              "yield_basis": "observed_county_yield",
+              "prediction_provenance": null,
+              "yield_bu_per_harvested_acre": 127.9,
+              "annual_margin_usd_per_acre": -286.6329999999999,
+              "rainfed_shortfall_mm": 324.05485400000003
+            },
+            {
+              "crop": "soybeans",
+              "harvest_year": 2027,
+              "historical_year": 2025,
+              "yield_basis": "observed_county_yield",
+              "prediction_provenance": null,
+              "yield_bu_per_harvested_acre": 45.5,
+              "annual_margin_usd_per_acre": -183.45999999999998,
+              "rainfed_shortfall_mm": 122.40795799999998
+            }
+          ],
+          "annual_margin_usd_per_acre": -235.04649999999995,
+          "rainfed_shortfall_mm": 446.462812
+        }
+      ],
+      "score": 54.2383235597,
+      "rank": 2,
+      "score_delta_vs_baseline": 19.2383235597,
+      "explanation": "Across historical scenarios: 15.6743 mm less rainfed shortfall over two years, with $21.3992 less margin per acre per year."
+    }
+  ],
+  "unranked": [],
+  "historical_pairs": [
+    [
+      2023,
+      2024
+    ],
+    [
+      2024,
+      2025
+    ]
+  ],
+  "excluded_pairs": [],
+  "applied_weights": {
+    "margin": 0.35,
+    "lower_rainfed_shortfall": 0.65
+  },
+  "applied_filters": {
+    "require_crop_family_change": true
+  },
+  "budgets_by_year": {
+    "2026": {
+      "corn": {
+        "price_usd_per_bu": 3.93,
+        "cost_usd_per_acre": 789.28
+      },
+      "soybeans": {
+        "price_usd_per_bu": 9.76,
+        "cost_usd_per_acre": 627.54
+      }
+    },
+    "2027": {
+      "corn": {
+        "price_usd_per_bu": 3.93,
+        "cost_usd_per_acre": 789.28
+      },
+      "soybeans": {
+        "price_usd_per_bu": 9.76,
+        "cost_usd_per_acre": 627.54
+      }
+    }
+  },
+  "economics_assumptions": "2025 national prices and regional cost proxies held constant for 2026 and 2027, without inflation adjustment.",
+  "yield_basis": "observed_county_yield",
+  "model_metadata": null,
+  "assumptions": [
+    "Historical observed county yields are used.",
+    "Average scenario outcomes before score normalization; scenarios have equal weights.",
+    "Overlapping historical pairs are dependent; reported ranges are scenario ranges.",
+    "Water uses fixed root depth, zero irrigation and independent planting-day initialization each season.",
+    "Upper-Kc daily shortfall is prepared separately for each historical crop-year.",
+    "Supplied budgets assume harvested area equals planted area.",
+    "No previous-crop yield adjustment or causal rotation effect is modeled."
+  ]
+}
