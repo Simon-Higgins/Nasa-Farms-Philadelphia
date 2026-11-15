@@ -48,12 +48,17 @@
             "prediction_provenance": {
               "county_fips": "20001",
               "crop": "corn",
-              "historical_year": 2022,
-              "observed_yield": 66.2,
+              "harvest_year": 2022,
+              "scenario_id": "historical-export",
               "predicted_yield": 74.96399999999991,
+              "yield_unit": "bu/acre",
+              "model_version": "random-forest-export-version-unspecified",
+              "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
               "source_file": "corn_with_predictions.csv",
               "source_row": 1960,
-              "library_file_id": "libfile_fde3_f-a0a67a558194819191b020a7dca00895_c16b4d99a4d481918d583e68513431b3"
+              "yield_basis": "ml_prediction",
+              "historical_year": 2022,
+              "observed_yield": 66.2
             },
             "yield_bu_per_harvested_acre": 74.96399999999991,
             "annual_margin_usd_per_acre": -494.6714800000003,
@@ -67,12 +72,17 @@
             "prediction_provenance": {
               "county_fips": "20001",
               "crop": "corn",
-              "historical_year": 2023,
-              "observed_yield": 96.7,
+              "harvest_year": 2023,
+              "scenario_id": "historical-export",
               "predicted_yield": 100.05800000000004,
+              "yield_unit": "bu/acre",
+              "model_version": "random-forest-export-version-unspecified",
+              "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
               "source_file": "corn_with_predictions.csv",
               "source_row": 1961,
-              "library_file_id": "libfile_fde3_f-a0a67a558194819191b020a7dca00895_c16b4d99a4d481918d583e68513431b3"
+              "yield_basis": "ml_prediction",
+              "historical_year": 2023,
+              "observed_yield": 96.7
             },
             "yield_bu_per_harvested_acre": 100.05800000000004,
             "annual_margin_usd_per_acre": -396.0520599999998,
@@ -96,12 +106,17 @@
             "prediction_provenance": {
               "county_fips": "20001",
               "crop": "corn",
-              "historical_year": 2023,
-              "observed_yield": 96.7,
+              "harvest_year": 2023,
+              "scenario_id": "historical-export",
               "predicted_yield": 100.05800000000004,
+              "yield_unit": "bu/acre",
+              "model_version": "random-forest-export-version-unspecified",
+              "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
               "source_file": "corn_with_predictions.csv",
               "source_row": 1961,
-              "library_file_id": "libfile_fde3_f-a0a67a558194819191b020a7dca00895_c16b4d99a4d481918d583e68513431b3"
+              "yield_basis": "ml_prediction",
+              "historical_year": 2023,
+              "observed_yield": 96.7
             },
             "yield_bu_per_harvested_acre": 100.05800000000004,
             "annual_margin_usd_per_acre": -396.0520599999998,
@@ -115,12 +130,17 @@
             "prediction_provenance": {
               "county_fips": "20001",
               "crop": "corn",
-              "historical_year": 2024,
-              "observed_yield": 127.9,
+              "harvest_year": 2024,
+              "scenario_id": "historical-export",
               "predicted_yield": 123.08399999999983,
+              "yield_unit": "bu/acre",
+              "model_version": "random-forest-export-version-unspecified",
+              "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
               "source_file": "corn_with_predictions.csv",
               "source_row": 1962,
-              "library_file_id": "libfile_fde3_f-a0a67a558194819191b020a7dca00895_c16b4d99a4d481918d583e68513431b3"
+              "yield_basis": "ml_prediction",
+              "historical_year": 2024,
+              "observed_yield": 127.9
             },
             "yield_bu_per_harvested_acre": 123.08399999999983,
             "annual_margin_usd_per_acre": -305.5598800000006,
@@ -133,7 +153,7 @@
     ],
     "score": 19.1671852568,
     "score_delta_vs_baseline": 0,
-    "explanation": "Your plan evaluated across historical weather pairs with supplied planning budgets."
+    "explanation": "Your plan evaluated across historical weather pairs using the returned planning budget assumptions."
   },
   "rotations": [
     {
@@ -177,12 +197,17 @@
               "prediction_provenance": {
                 "county_fips": "20001",
                 "crop": "soybeans",
-                "historical_year": 2022,
-                "observed_yield": 19.6,
+                "harvest_year": 2022,
+                "scenario_id": "historical-export",
                 "predicted_yield": 21.385999999999978,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
                 "source_file": "soybeans_with_predictions.csv",
                 "source_row": 1603,
-                "library_file_id": "libfile_fde3_f-f0cded1e00e881919ce5ed58939fc477_c16b4d99a4d481918d583e68513431b3"
+                "yield_basis": "ml_prediction",
+                "historical_year": 2022,
+                "observed_yield": 19.6
               },
               "yield_bu_per_harvested_acre": 21.385999999999978,
               "annual_margin_usd_per_acre": -418.8126400000002,
@@ -196,12 +221,17 @@
               "prediction_provenance": {
                 "county_fips": "20001",
                 "crop": "corn",
-                "historical_year": 2023,
-                "observed_yield": 96.7,
+                "harvest_year": 2023,
+                "scenario_id": "historical-export",
                 "predicted_yield": 100.05800000000004,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
                 "source_file": "corn_with_predictions.csv",
                 "source_row": 1961,
-                "library_file_id": "libfile_fde3_f-a0a67a558194819191b020a7dca00895_c16b4d99a4d481918d583e68513431b3"
+                "yield_basis": "ml_prediction",
+                "historical_year": 2023,
+                "observed_yield": 96.7
               },
               "yield_bu_per_harvested_acre": 100.05800000000004,
               "annual_margin_usd_per_acre": -396.0520599999998,
@@ -225,12 +255,17 @@
               "prediction_provenance": {
                 "county_fips": "20001",
                 "crop": "soybeans",
-                "historical_year": 2023,
-                "observed_yield": 23,
+                "harvest_year": 2023,
+                "scenario_id": "historical-export",
                 "predicted_yield": 22.467000000000002,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
                 "source_file": "soybeans_with_predictions.csv",
                 "source_row": 1604,
-                "library_file_id": "libfile_fde3_f-f0cded1e00e881919ce5ed58939fc477_c16b4d99a4d481918d583e68513431b3"
+                "yield_basis": "ml_prediction",
+                "historical_year": 2023,
+                "observed_yield": 23.0
               },
               "yield_bu_per_harvested_acre": 22.467000000000002,
               "annual_margin_usd_per_acre": -408.26207999999997,
@@ -244,12 +279,17 @@
               "prediction_provenance": {
                 "county_fips": "20001",
                 "crop": "corn",
-                "historical_year": 2024,
-                "observed_yield": 127.9,
+                "harvest_year": 2024,
+                "scenario_id": "historical-export",
                 "predicted_yield": 123.08399999999983,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
                 "source_file": "corn_with_predictions.csv",
                 "source_row": 1962,
-                "library_file_id": "libfile_fde3_f-a0a67a558194819191b020a7dca00895_c16b4d99a4d481918d583e68513431b3"
+                "yield_basis": "ml_prediction",
+                "historical_year": 2024,
+                "observed_yield": 127.9
               },
               "yield_bu_per_harvested_acre": 123.08399999999983,
               "annual_margin_usd_per_acre": -305.5598800000006,
@@ -306,12 +346,17 @@
               "prediction_provenance": {
                 "county_fips": "20001",
                 "crop": "corn",
-                "historical_year": 2022,
-                "observed_yield": 66.2,
+                "harvest_year": 2022,
+                "scenario_id": "historical-export",
                 "predicted_yield": 74.96399999999991,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
                 "source_file": "corn_with_predictions.csv",
                 "source_row": 1960,
-                "library_file_id": "libfile_fde3_f-a0a67a558194819191b020a7dca00895_c16b4d99a4d481918d583e68513431b3"
+                "yield_basis": "ml_prediction",
+                "historical_year": 2022,
+                "observed_yield": 66.2
               },
               "yield_bu_per_harvested_acre": 74.96399999999991,
               "annual_margin_usd_per_acre": -494.6714800000003,
@@ -325,12 +370,17 @@
               "prediction_provenance": {
                 "county_fips": "20001",
                 "crop": "soybeans",
-                "historical_year": 2023,
-                "observed_yield": 23,
+                "harvest_year": 2023,
+                "scenario_id": "historical-export",
                 "predicted_yield": 22.467000000000002,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
                 "source_file": "soybeans_with_predictions.csv",
                 "source_row": 1604,
-                "library_file_id": "libfile_fde3_f-f0cded1e00e881919ce5ed58939fc477_c16b4d99a4d481918d583e68513431b3"
+                "yield_basis": "ml_prediction",
+                "historical_year": 2023,
+                "observed_yield": 23.0
               },
               "yield_bu_per_harvested_acre": 22.467000000000002,
               "annual_margin_usd_per_acre": -408.26207999999997,
@@ -354,12 +404,17 @@
               "prediction_provenance": {
                 "county_fips": "20001",
                 "crop": "corn",
-                "historical_year": 2023,
-                "observed_yield": 96.7,
+                "harvest_year": 2023,
+                "scenario_id": "historical-export",
                 "predicted_yield": 100.05800000000004,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
                 "source_file": "corn_with_predictions.csv",
                 "source_row": 1961,
-                "library_file_id": "libfile_fde3_f-a0a67a558194819191b020a7dca00895_c16b4d99a4d481918d583e68513431b3"
+                "yield_basis": "ml_prediction",
+                "historical_year": 2023,
+                "observed_yield": 96.7
               },
               "yield_bu_per_harvested_acre": 100.05800000000004,
               "annual_margin_usd_per_acre": -396.0520599999998,
@@ -373,12 +428,17 @@
               "prediction_provenance": {
                 "county_fips": "20001",
                 "crop": "soybeans",
-                "historical_year": 2024,
-                "observed_yield": 26.5,
+                "harvest_year": 2024,
+                "scenario_id": "historical-export",
                 "predicted_yield": 26.346,
+                "yield_unit": "bu/acre",
+                "model_version": "random-forest-export-version-unspecified",
+                "weather_assumptions": "Historical NASA POWER and county crop-share delta features",
                 "source_file": "soybeans_with_predictions.csv",
                 "source_row": 1605,
-                "library_file_id": "libfile_fde3_f-f0cded1e00e881919ce5ed58939fc477_c16b4d99a4d481918d583e68513431b3"
+                "yield_basis": "ml_prediction",
+                "historical_year": 2024,
+                "observed_yield": 26.5
               },
               "yield_bu_per_harvested_acre": 26.346,
               "annual_margin_usd_per_acre": -370.40304,
@@ -406,7 +466,26 @@
       2024
     ]
   ],
-  "excluded_pairs": [],
+  "excluded_pairs": [
+    {
+      "historical_years": [
+        2020,
+        2021
+      ],
+      "reasons": [
+        "missing_prediction:soybeans:2021"
+      ]
+    },
+    {
+      "historical_years": [
+        2021,
+        2022
+      ],
+      "reasons": [
+        "missing_prediction:soybeans:2021"
+      ]
+    }
+  ],
   "applied_weights": {
     "margin": 0.35,
     "lower_rainfed_shortfall": 0.65
@@ -437,13 +516,14 @@
     }
   },
   "economics_assumptions": "2025 national prices and regional cost proxies held constant for 2026 and 2027, without inflation adjustment.",
+  "margin_calculation": "custom_budget",
   "yield_basis": "ml_prediction",
   "model_metadata": {
+    "yield_unit": "bu/acre",
     "model_family": "random_forest",
     "model_version": null,
-    "evaluation_split": "unconfirmed",
-    "yield_unit": "bu/acre",
-    "unit_basis": "Inferred by matching observed yield to compiled bu/harvested-acre source for each crop-year; verified at load."
+    "evaluation_split": "Current training source uses a random holdout; exported training membership is unavailable",
+    "unit_basis": "Observed export yields matched compiled bu/harvested-acre columns for each included row"
   },
   "assumptions": [
     "Random forest estimates on historical inputs; export training membership and evaluation split are unconfirmed.",

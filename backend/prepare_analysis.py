@@ -19,10 +19,14 @@ def weather_rows(stream, county, value_column, year=2024):
     return result
 
 
-def analyze(data_dir, daily_et_path=None, county="20001", year=2024):
-    result = build(data_dir, county, year)
+def analyze(data_dir, daily_et_path=None, county="20001", year=2024, crop_names=None,
+            source_rows=None, daily_weather=None):
+    result = build(data_dir, county, year, crop_names=crop_names, source_rows=source_rows)
     et, rain = {}, {}
-    if daily_et_path:
+    if daily_weather is not None:
+        et, rain = daily_weather
+        result['source_files'] += ['county_daily_reference_et_2015_2026.csv', 'county_daily_gridmet_precipitation_2015_2026.zip']
+    elif daily_et_path:
         with daily_et_path.open(encoding='utf-8-sig', newline='') as stream:
             et = weather_rows(stream, result['county_fips'], 'eto_mm_day', year)
         archive = data_dir / 'county_daily_gridmet_precipitation_2015_2026.zip'
@@ -38,7 +42,7 @@ def analyze(data_dir, daily_et_path=None, county="20001", year=2024):
         crop['yield_basis'] = 'observed_county_yield'
         crop['heat_assessment'] = heat_screen(crop['heat'], crop['characteristics'])
         crop['water_assessment'] = {'status': 'unavailable', 'reason': 'missing_daily_reference_et', 'rainfed_shortfall_mm': None}
-        if daily_et_path:
+        if daily_et_path or daily_weather is not None:
             try:
                 crop['water_assessment'] = {'status': 'calculated', **{
                     bound: water_balance(crop['planting_water'], crop['characteristics'], et, rain, bound)

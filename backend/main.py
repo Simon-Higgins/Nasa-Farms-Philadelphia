@@ -50,8 +50,8 @@ class PlanningRequest(StrictModel):
     baseline_rotation: list[str] = Field(min_length=2, max_length=2)
     require_crop_family_change: bool
     weights: Weights
-    budgets_by_year: dict[str, dict[str, CropBudget]]
-    economics_assumptions: str = Field(min_length=1)
+    budgets_by_year: dict[str, dict[str, CropBudget]] | None = None
+    economics_assumptions: str | None = Field(default=None, min_length=1)
 
 
 @app.post('/api/v1/planning/compare')
@@ -63,6 +63,8 @@ def planning_compare(request: PlanningRequest):
 @app.get("/api/v1/capabilities")
 def capabilities():
     """Prepared comparison choices; model crop coverage is not ranking coverage."""
+    from backend.coverage import planning_counties
+    counties = planning_counties()
     return {
         "horizon_years": 2,
         "scenarios": [
@@ -78,11 +80,16 @@ def capabilities():
         ],
         "ml_predictions": {"status": "prepared_county_slice", "ranking_enabled": True,
                            "county_fips": "20001", "crops": ["corn", "soybeans"],
+                           "counties": counties,
                            "historical_pairs": [[2022, 2023], [2023, 2024]]},
         "planning": {
             "endpoint": "/api/v1/planning/compare", "county_fips": "20001",
+            "supported_ml_counties": counties,
             "crops": ["corn", "soybeans"], "historical_pairs": [[2023, 2024], [2024, 2025]],
-            "yield_basis": "observed_county_yield", "requires_explicit_budgets": True,
+            "yield_basis": "observed_county_yield", "requires_explicit_budgets": False,
+            "observed_requires_explicit_budgets": True,
+            "ml_default_budget": {"available": True, "price_year": 2025, "cost_year": 2026,
+                                  "requires_explicit_budgets": False},
         },
         "notes": ["Crop choices do not guarantee complete data for every sequence.",
                   "Historical scenarios are not forecasts."],
@@ -192,9 +199,18 @@ def county_season_analysis(county_fips: str, harvest_year: int):
     import json
     from pathlib import Path
 
-    if county_fips != "20001" or harvest_year not in (2024, 2025):
-        raise HTTPException(404, "Analysis covers Allen County, KS (20001), 2024 and 2025.")
-    path = Path(__file__).resolve().parent / "data" / f"allen-{harvest_year}-analysis.json"
+    from backend.coverage import planning_counties
+    data_dir = Path(__file__).resolve().parent / 'data'
+    prepared = any(c['county_fips'] == county_fips for c in planning_counties())
+    if county_fips == '20001' and harvest_year in (2022, 2023, 2024, 2025):
+        path = data_dir / f'allen-{harvest_year}-analysis.json'
+    elif prepared and harvest_year in (2020, 2021, 2022, 2023, 2024):
+        path = data_dir / 'counties' / county_fips / f'{harvest_year}-analysis.json'
+    else:
+        raise HTTPException(404, 'County season analysis is not prepared.')
     if not path.exists():
         raise HTTPException(503, "Run python -m backend.prepare_analysis first.")
-    return json.loads(path.read_text(encoding="utf-8"))
+    result = json.loads(path.read_text(encoding="utf-8"))
+    if result['county_fips'] != county_fips or result['harvest_year'] != harvest_year:
+        raise HTTPException(503, 'County analysis identity mismatch.')
+    return result

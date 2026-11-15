@@ -4,15 +4,56 @@ from statistics import mean
 import unittest
 from unittest.mock import patch
 from fastapi import HTTPException
-from backend.main import PlanningRequest, planning_compare
+from backend.main import PlanningRequest, planning_compare, capabilities, county_season_analysis
 
 
 class PlanningTests(unittest.TestCase):
+    def test_every_advertised_ml_county_runs_with_matching_inputs(self):
+        counties = capabilities()['planning']['supported_ml_counties']
+        self.assertTrue(counties)
+        for county in counties:
+            with self.subTest(county=county['county_fips']):
+                request = self.request()
+                request.county_fips = county['county_fips']
+                request.yield_basis = 'ml_prediction'
+                result = planning_compare(request)
+                analysis = county_season_analysis(request.county_fips, county['historical_pairs'][0][0])
+                self.assertEqual(analysis['county_fips'], request.county_fips)
+                self.assertEqual(result['county_label'], county['county_label'])
+                self.assertEqual(result['historical_pairs'], county['historical_pairs'])
+                self.assertEqual(len(result['rotations']), 2)
+                default_request = request.model_copy(update={'budgets_by_year': None, 'economics_assumptions': None})
+                cached = planning_compare(default_request)
+                self.assertEqual(cached['margin_calculation'], 'precomputed_default')
+                custom_request = PlanningRequest.model_validate({
+                    **default_request.model_dump(), 'budgets_by_year': cached['budgets_by_year'],
+                    'economics_assumptions': cached['economics_assumptions']})
+                recalculated = planning_compare(custom_request)
+                for cached_row, custom_row in zip([cached['baseline'], *cached['rotations']],
+                                                  [recalculated['baseline'], *recalculated['rotations']]):
+                    self.assertEqual(cached_row['id'], custom_row['id'])
+                    self.assertAlmostEqual(cached_row['annual_margin_usd_per_acre'], custom_row['annual_margin_usd_per_acre'])
+                    self.assertAlmostEqual(cached_row['score'], custom_row['score'])
+                for row in [result['baseline'], *result['rotations']]:
+                    for scenario in row['scenarios']:
+                        for season in scenario['seasons']:
+                            record = season['prediction_provenance']
+                            self.assertEqual(record['county_fips'], request.county_fips)
+                            self.assertEqual(record['crop'], season['crop'])
+                            self.assertEqual(record['historical_year'], season['historical_year'])
+        request.county_fips = '99999'
+        with self.assertRaises(HTTPException) as error:
+            planning_compare(request)
+        self.assertEqual(error.exception.status_code, 404)
+
     def test_real_ml_scenarios_and_no_observed_fallback(self):
         request = self.request()
         request.yield_basis = 'ml_prediction'
         result = planning_compare(request)
         self.assertEqual(result['historical_pairs'], [[2022, 2023], [2023, 2024]])
+        self.assertEqual(len(result['excluded_pairs']), 2)
+        for pair in result['excluded_pairs']:
+            self.assertIn('missing_prediction:soybeans:2021', pair['reasons'])
         expected_corn_yield = (74.964 + 100.058 + 100.058 + 123.084) / 4
         self.assertAlmostEqual(result['baseline']['annual_margin_usd_per_acre'], expected_corn_yield * 4 - 700)
         self.assertEqual(len(result['rotations']), 2)
@@ -33,6 +74,40 @@ class PlanningTests(unittest.TestCase):
             with self.assertRaises(HTTPException) as error:
                 planning_compare(request)
         self.assertEqual(error.exception.status_code, 422)
+
+    def test_default_margin_cache_invalidation(self):
+        request = self.request().model_copy(update={
+            'yield_basis': 'ml_prediction', 'budgets_by_year': None, 'economics_assumptions': None})
+        original = json.loads
+
+        def changed_cache(text, **kwargs):
+            result = original(text, **kwargs)
+            if isinstance(result, dict) and 'prediction_sha256' in result:
+                result['prediction_sha256'] = 'outdated'
+            return result
+
+        with patch('backend.planning.json.loads', side_effect=changed_cache):
+            with self.assertRaises(HTTPException) as error:
+                planning_compare(request)
+        self.assertEqual(error.exception.status_code, 503)
+
+    def test_all_four_pairs_and_unchanged_daily_calculation(self):
+        request = self.request()
+        request.yield_basis = 'ml_prediction'
+        request.county_fips = '20005'
+        result = planning_compare(request)
+        self.assertEqual(result['historical_pairs'], [[2020, 2021], [2021, 2022], [2022, 2023], [2023, 2024]])
+        self.assertEqual(result['baseline']['scenario_count'], 4)
+        self.assertEqual(result['baseline']['annual_margin_usd_per_acre'], mean(
+            scenario['annual_margin_usd_per_acre'] for scenario in result['baseline']['scenarios']))
+        # The indexed source path must reproduce the existing daily engine.
+        data = Path(__file__).parent / 'data'
+        legacy = json.loads((data / 'allen-2022-analysis.json').read_text())
+        indexed = json.loads((data / 'counties/20001/2022-analysis.json').read_text())
+        for crop in ('corn', 'soybeans'):
+            old = next(row for row in legacy['crops'] if row['crop'] == crop)
+            new = next(row for row in indexed['crops'] if row['crop'] == crop)
+            self.assertEqual(old['water_assessment'], new['water_assessment'])
 
     def request(self):
         return PlanningRequest(

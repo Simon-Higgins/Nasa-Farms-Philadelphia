@@ -9,7 +9,7 @@ CROPS = {'corn': 'corn_grain', 'soybeans': 'soybeans', 'sorghum': 'sorghum_grain
 GDD = {'corn': 'corn', 'soybeans': 'soybean', 'sorghum': 'grain_sorghum'}
 
 
-def build(data_dir, county='20001', year=2024):
+def build(data_dir, county='20001', year=2024, crop_names=None, source_rows=None):
     sources = []
 
     def read(name, predicate):
@@ -19,6 +19,8 @@ def build(data_dir, county='20001', year=2024):
         if name == 'cdl_with_yields_aggregated_cleaned.csv' and not path.exists():
             path = data_dir / 'nasa_data_merged(simon).csv'
         sources.append(path.name)
+        if source_rows is not None:
+            return [row for row in source_rows.get(Path(name).name, []) if predicate(row)]
         with path.open(encoding='utf-8-sig', newline='') as stream:
             return [row for row in csv.DictReader(stream) if predicate(row)]
 
@@ -40,6 +42,8 @@ def build(data_dir, county='20001', year=2024):
     characteristics = read('share/crop_characteristics.csv', lambda r: r['crop'] in CROPS)
     crops = []
     for crop, yield_name in CROPS.items():
+        if crop_names is not None and crop not in crop_names:
+            continue
         soil = one([r for r in soils if r['crop'] == crop], crop + ' soil')
         heat = one(read(f'share/county_{GDD[crop]}_gdd_planting_dates_2015_2026.csv', lambda r: r['county_fips'] == county and r['year'] == str(year) and r['planting_date'] == soil['scenario_planting_date']), crop + ' heat')
         price = one([r for r in prices if r['crop'] == crop], crop + ' price')

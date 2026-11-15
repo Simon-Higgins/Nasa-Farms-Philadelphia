@@ -97,7 +97,7 @@
     ],
     "score": 35.0,
     "score_delta_vs_baseline": 0,
-    "explanation": "Your plan evaluated across historical weather pairs with supplied planning budgets."
+    "explanation": "Your plan evaluated across historical weather pairs using the returned planning budget assumptions."
   },
   "rotations": [
     {
@@ -329,6 +329,7 @@
     }
   },
   "economics_assumptions": "2025 national prices and regional cost proxies held constant for 2026 and 2027, without inflation adjustment.",
+  "margin_calculation": "custom_budget",
   "yield_basis": "observed_county_yield",
   "model_metadata": null,
   "assumptions": [

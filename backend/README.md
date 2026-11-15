@@ -1,5 +1,85 @@
 # FieldShift local backend
 
+## Precomputed default margins
+
+For ML planning, the frontend can omit `budgets_by_year` and
+`economics_assumptions`. The backend uses 2025 national crop prices and each
+county's compiled 2026 regional cost proxies, held constant for both planning
+years without inflation adjustment. Use `examples/fieldshift-request.planning-default.json`
+and its matching response for this shorter request.
+
+`backend/data/counties/<FIPS>/default-margins.json` stores the budget, each
+crop-year's margin, and each rotation's average margin, shortfall and ranges.
+Scores, ranks and explanations respond to the farmer's weights, selected
+baseline and family filter. The response includes the resolved budgets and
+`margin_calculation: precomputed_default`. Supplying budgets and their
+assumptions uses `margin_calculation: custom_budget` and recalculates margins.
+Observed-yield planning continues to require explicit budgets.
+
+Rebuild default margins without rerunning environmental preparation:
+
+```powershell
+.venv\Scripts\python.exe -m backend.prepare_margins
+```
+
+County preparation also rebuilds margins automatically. Source hashes prevent
+using stale margins after ML yield or environmental caches change. Rebuild
+when editing the default budget assumptions. The two planning years use the
+same economic assumptions, so cached margins can be reused for different
+planning-year labels. All prices and costs are proxies returned with the result.
+
+## Supported county selector
+
+The prepared nationwide catalog contains 595 counties across 21 states.
+There are 151 counties with one usable pair, 135 with two, 99 with three,
+and 210 with all four. Preparation evaluated all 1,873 counties represented
+in the corn exports and recorded 1,278 county exclusions. Exclusions include
+missing crop predictions, failed thermal screens, unmatched compiled yield
+records and incomplete water inputs. These counts describe the supplied data
+and the current screening assumptions.
+
+Read `GET /api/v1/capabilities` and populate the ML county selector from
+`planning.supported_ml_counties`. Each entry includes `county_fips`,
+`county_label`, `crops`, and `historical_pairs`. Send the selected FIPS to
+`POST /api/v1/planning/compare` with `yield_basis: "ml_prediction"`.
+Observed-yield comparison availability is listed separately in `scenarios`.
+Unprepared county selections return 404 with a pointer to the capability list.
+
+The scenario window includes 2020-2021, 2021-2022, 2022-2023 and 2023-2024.
+Counties are supported when at least one pair has complete inputs for both
+crops. Every rotation within a county uses the same pairs. Allen County
+(`20001`) retains two pairs because its 2021 soybean prediction is absent.
+Atchison (`20005`) supports all four. The manifest lists current coverage,
+scenario counts, and excluded pairs with reasons. Use `examples/fieldshift-request.atchison-ml.json`
+and its response to test four scenarios. That example combines compiled Atchison
+2026 regional cost proxies with 2025 national prices and holds them constant
+for 2027 without inflation adjustment.
+
+Prepare every eligible county from the complete prediction files and compiled inputs:
+
+```powershell
+.venv\Scripts\python.exe -m backend.prepare_counties
+```
+
+The command reads `training_files/corn_with_predictions.csv` and
+`training_files/soybeans_with_predictions.csv`. Source paths can be changed
+with `--predictions-dir` and `--data-dir`. Input loading rejects duplicate keys
+and invalid predictions. Each included pair requires both crops in both years,
+matching observed yields in the compiled bushels/acre columns, passing heat
+screens, and complete daily ET/rain/soil inputs. Failed counties
+are recorded with reasons in `backend/data/planning-counties.json`.
+
+Successful county caches live in `backend/data/counties/<FIPS>/`. The API
+loads these compact JSON files instead of scanning source CSVs per request.
+The published list covers only the most recent batch. Include all desired
+counties when rebuilding with `--counties`. Each county's planning budgets are supplied in the
+request. Reusing an example's price/cost values is an explicit proxy assumption.
+The batch index streams each input once and keeps daily weather in compact
+numeric arrays. Seasons retain daily rainfall/ET timing through the existing
+water-balance engine. Invalid or missing inputs exclude affected pairs, with
+explicit reasons. Observed yields are used for unit validation, with no
+substitution for missing ML predictions.
+
 ## ML planning integration
 
 Send `examples/fieldshift-request.planning-ml.json` to
@@ -9,11 +89,10 @@ and 2023-2024. `examples/fieldshift-response.planning-ml.json` contains the
 prepared result. The example retains 35% margin / 65% shortfall weights and
 2025 price/cost proxies held constant across the 2026-2027 planning years.
 
-`backend/data/allen-ml-yields.json` is a derived six-record county slice read
-from the supplied attachments. It retains source filenames, file identities,
-line numbers and the observed yields alongside each prediction. Full CSV
-transfer was unavailable. This compact slice is sufficient to run this county
-locally. Prediction units are inferred from matching the observed-yield fields
+`backend/data/allen-ml-yields.json` is the legacy six-record county slice.
+The current prepared county caches are built from the complete local CSVs
+in `training_files/`, retaining source filenames, row numbers and observed
+yields alongside predictions. Prediction units are inferred by matching observed-yield fields
 to the compiled bu/harvested-acre data in every included crop-year. The loader
 repeats that crosscheck before calculating margins. Model version and evaluation
 split remain unconfirmed. Export estimates may include training rows.
