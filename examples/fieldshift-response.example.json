@@ -1,0 +1,59 @@
+{
+  "data_mode": "demo",
+  "county_fips": "01001",
+  "county_label": "Autauga County, AL",
+  "scenario_label": "Illustrative historical-weather scenario",
+  "sources": [],
+  "rotations": [
+    {
+      "id": "soybeans-corn",
+      "rank": 1,
+      "seasons": [
+        {
+          "harvest_year": 2026,
+          "crop": "soybeans"
+        },
+        {
+          "harvest_year": 2027,
+          "crop": "corn"
+        }
+      ],
+      "annual_margin_usd_per_acre": 150,
+      "rainfed_shortfall_mm": 40,
+      "heat_status": "passed",
+      "margin_normalized": 0,
+      "score": 65,
+      "explanation": "20 mm less rainfed shortfall over two years, with $30 less margin per acre per year.",
+      "lower_shortfall_normalized": 1
+    },
+    {
+      "id": "corn-soybeans",
+      "rank": 2,
+      "seasons": [
+        {
+          "harvest_year": 2026,
+          "crop": "corn"
+        },
+        {
+          "harvest_year": 2027,
+          "crop": "soybeans"
+        }
+      ],
+      "annual_margin_usd_per_acre": 180,
+      "rainfed_shortfall_mm": 60,
+      "heat_status": "passed",
+      "margin_normalized": 1,
+      "score": 35,
+      "explanation": "$30 more margin per acre per year, with 20 mm more rainfed shortfall over two years.",
+      "lower_shortfall_normalized": 0
+    }
+  ],
+  "unranked": [],
+  "applied_weights": {
+    "margin": 0.35,
+    "lower_rainfed_shortfall": 0.65
+  },
+  "applied_filters": {
+    "require_crop_family_change": true
+  }
+}
