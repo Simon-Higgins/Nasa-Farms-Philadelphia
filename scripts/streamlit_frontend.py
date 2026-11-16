@@ -11,102 +11,200 @@ from scripts.fieldshift_client import BackendError, FieldShiftClient, build_payl
 
 st.set_page_config(page_title="FieldShift - Compare Crop Rotations", layout="wide")
 
+
 st.markdown("""
-    <style>
-    html, body, [class*="css"] {
-        font-family: 'Arial', sans-serif !important;
-        color: #1A2421;
-    }
-    [data-testid="stAppViewContainer"] {
-        background-color: #F8F6F0;
-    }
-    [data-testid="stHeader"] {
-        background-color: #F8F6F0;
-    }
-    .block-container {
-        padding-top: 2rem !important;
-        padding-bottom: 2rem !important;
-    }
-    div[data-baseweb="select"] > div {
-        background-color: #FFFFFF !important;
-        border: 1px solid #C8C4B8 !important;
-        border-radius: 6px !important;
-        color: #1A2421 !important;
-    }
-    .stButton > button {
-        background-color: #1A2421 !important;
-        color: #F8F6F0 !important;
-        border: none !important;
-        border-radius: 6px !important;
-        padding: 0.55rem 1rem !important;
-        font-weight: 600 !important;
-        width: 100%;
-    }
-    .stButton > button:hover {
-        background-color: #2B3B36 !important;
-        color: #FDF0AC !important;
-    }
-    .baseline-card {
-        background-color: #EAE6D9;
-        border: 1px solid #D5D0C0;
-        border-radius: 8px;
-        padding: 14px 18px;
-        margin-bottom: 18px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .score-pill {
-        background-color: #1A2421;
-        color: #FDF0AC;
-        font-weight: 700;
-        padding: 6px 14px;
-        border-radius: 6px;
-        font-size: 15px;
-    }
-    .alt-row {
-        background-color: #FFFFFF;
-        border: 1px solid #DCD8CA;
-        border-radius: 8px;
-        padding: 12px 16px;
-        margin-bottom: 10px;
-    }
-    .alt-row-active {
-        background-color: #FDF0AC;
-        border: 1.5px solid #1A2421;
-        border-radius: 8px;
-        padding: 12px 16px;
-        margin-bottom: 10px;
-    }
-    .crop-stage-card {
-        background-color: #1A2421;
-        color: #F8F6F0;
-        border-radius: 10px;
-        padding: 20px;
-        border-bottom: 4px solid #FDF0AC;
-    }
-    .family-tag {
-        display: inline-block;
-        background-color: #FDF0AC;
-        color: #1A2421;
-        font-size: 11px;
-        font-weight: 700;
-        padding: 3px 9px;
-        border-radius: 4px;
-        margin-top: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    .summary-banner {
-        background-color: #EAE6D9;
-        border-left: 4px solid #1A2421;
-        padding: 12px 16px;
-        border-radius: 6px;
-        margin-top: 16px;
-        font-size: 14px;
-    }
-    </style>
+<style>
+/* GLOBAL FONT */
+html, body,
+[data-testid="stAppViewContainer"],
+[data-testid="stAppViewContainer"] *,
+[data-testid="stSidebar"] * {
+    font-family: Arial, Helvetica, sans-serif !important;
+}
+
+/* MAIN BACKGROUND */
+[data-testid="stAppViewContainer"],
+[data-testid="stHeader"] {
+    background-color: #F8F6F0 !important;
+}
+
+/* DEFAULT TEXT COLORS */
+[data-testid="stAppViewContainer"] {
+    color: #1A2421 !important;
+}
+
+[data-testid="stAppViewContainer"] p,
+[data-testid="stAppViewContainer"] label,
+[data-testid="stAppViewContainer"] h1,
+[data-testid="stAppViewContainer"] h2,
+[data-testid="stAppViewContainer"] h3,
+[data-testid="stWidgetLabel"],
+[data-testid="stMarkdownContainer"] {
+    color: #1A2421 !important;
+}
+
+/* SPACING */
+.block-container {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+}
+
+/* DROPDOWNS */
+div[data-baseweb="select"] > div {
+    background-color: #FFFFFF !important;
+    border: 1px solid #C8C4B8 !important;
+    border-radius: 6px !important;
+    color: #1A2421 !important;
+}
+
+div[data-baseweb="select"] span,
+div[data-baseweb="select"] input {
+    color: #1A2421 !important;
+}
+
+/* DROPDOWN OPTIONS */
+div[data-baseweb="popover"],
+div[data-baseweb="popover"] * {
+    color: #1A2421 !important;
+}
+
+div[data-baseweb="popover"] li {
+    background-color: #FFFFFF !important;
+}
+
+/* BUTTONS */
+.stButton > button,
+.stFormSubmitButton > button {
+    background-color: #1A2421 !important;
+    color: #F8F6F0 !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 0.55rem 1rem !important;
+    font-weight: 600 !important;
+    width: 100%;
+}
+
+.stButton > button *,
+.stFormSubmitButton > button * {
+    color: #F8F6F0 !important;
+}
+
+.stButton > button:hover,
+.stFormSubmitButton > button:hover {
+    background-color: #2B3B36 !important;
+    color: #FDF0AC !important;
+}
+
+.stButton > button:hover *,
+.stFormSubmitButton > button:hover * {
+    color: #FDF0AC !important;
+}
+
+/* BASELINE CARD */
+.baseline-card {
+    background-color: #EAE6D9;
+    border: 1px solid #D5D0C0;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #1A2421 !important;
+}
+
+.baseline-card div:not(.score-pill) {
+    color: #1A2421;
+}
+
+/* SCORE PILL */
+.score-pill {
+    background-color: #1A2421;
+    color: #FDF0AC !important;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+/* ALTERNATIVE ROWS */
+.alt-row {
+    background-color: #FFFFFF;
+    border: 1px solid #DCD8CA;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    color: #1A2421 !important;
+}
+
+.alt-row-active {
+    background-color: #FDF0AC;
+    border: 1.5px solid #1A2421;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    color: #1A2421 !important;
+}
+
+.alt-row div,
+.alt-row-active div {
+    color: #1A2421 !important;
+}
+
+/* CROP STAGE CARDS */
+.crop-stage-card {
+    background-color: #1A2421;
+    color: #F8F6F0 !important;
+    border-radius: 10px;
+    padding: 20px;
+    border-bottom: 4px solid #FDF0AC;
+}
+
+.crop-stage-card div:not(.family-tag) {
+    color: #F8F6F0 !important;
+}
+
+/* FAMILY TAG */
+.family-tag {
+    display: inline-block;
+    background-color: #FDF0AC;
+    color: #1A2421 !important;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 4px;
+    margin-top: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* SUMMARY BANNER */
+.summary-banner {
+    background-color: #EAE6D9;
+    border-left: 4px solid #1A2421;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-top: 16px;
+    font-size: 14px;
+    color: #1A2421 !important;
+}
+
+/* CAPTIONS AND SLIDER LABELS */
+[data-testid="stCaptionContainer"],
+[data-testid="stCaptionContainer"] *,
+[data-testid="stSlider"] p,
+[data-testid="stCheckbox"] p {
+    color: #1A2421 !important;
+}
+
+/* INFO AND EXPANDER TEXT */
+[data-testid="stAlert"] p,
+[data-testid="stExpander"] p {
+    color: #1A2421 !important;
+}
+</style>
 """, unsafe_allow_html=True)
+
 
 CROP_FAMILIES = {"Corn": "Grass / Cereal", "Soybeans": "Legume"}
 
