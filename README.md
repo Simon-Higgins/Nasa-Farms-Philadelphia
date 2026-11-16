@@ -113,9 +113,15 @@ The FastAPI backend supports **595 U.S. counties** for corn and soybean comparis
 - **Ranking:** Normalize both indicators, apply farmer-selected weights and the crop-family filter, and return a scored baseline plus up to two ranked alternatives with explanations.
 
 Environmental results and default margins are precomputed. **All 23 backend tests pass.**
+ 
+## Frontend:
 
-## Frontend: 
+Interactive Streamlit dashboard for comparing 2-year crop rotation strategies across **595 U.S. counties** using historical weather scenarios, USDA economic proxies, and machine learning yield predictions.
 
+### Features
+- **County & Planning Horizon Selection:** Dynamically loads the 595 ML-supported U.S. counties from the backend and evaluates 2-year harvest horizons (starting 2026–2027).
+- **Custom Priority Weighting:** Interactive slider balancing **Favoring lower water (%)** against **Favoring profit (%)**, plus an optional crop-family rotation filter.
+- **Baseline vs. Ideal Alternatives:** Displays the farmer's current planned rotation (`baseline`) alongside ranked alternative rotations (`rotations`), complete with per-acre annual margin, a 2-year water shortfall (mm), and a score element to score a prediction's profitability and water usage. 
 ### Modeling Assumptions
 
 The model assumes fixed root depth and zero irrigation. Previous-crop yield effects and direct soil-health changes are not modeled.
