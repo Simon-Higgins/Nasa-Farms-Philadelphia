@@ -128,9 +128,11 @@ class DashboardTests(unittest.TestCase):
         self.run_dashboard(ui)
         self.assertEqual(ui.session_state['api_data']['county_fips'], '20005')
         before = ui.session_state['api_data']['baseline']
-        ui.values['Higher margin priority (%)'] = 100
+        ui.values['Profit priority (%)'] = 100
         self.run_dashboard(ui)
         after = ui.session_state['api_data']['baseline']
+        self.assertEqual(ui.session_state['submitted_request']['weights']['margin'], 1.0)
+        self.assertEqual(ui.session_state['submitted_request']['weights']['lower_rainfed_shortfall'], 0.0)
         self.assertEqual(before['annual_margin_usd_per_acre'], after['annual_margin_usd_per_acre'])
         self.assertEqual(before['rainfed_shortfall_mm'], after['rainfed_shortfall_mm'])
         self.assertNotEqual(before['score'], after['score'])
