@@ -1,7 +1,13 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
-import requests
+import os
+import sys
+from pathlib import Path
+from html import escape
+
+ROOT = str(Path(__file__).resolve().parents[1])
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
+from scripts.fieldshift_client import BackendError, FieldShiftClient, build_payload
 
 st.set_page_config(page_title="FieldShift - Compare Crop Rotations", layout="wide")
 
@@ -102,131 +108,22 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-CROP_FAMILIES = {
-    "Corn": "Grass / Cereal",
-    "Soybeans": "Legume",
-    "Spring wheat": "Grass / Cereal",
-    "Winter wheat": "Grass / Cereal",
-    "Durum wheat": "Grass / Cereal",
-    "Barley": "Grass / Cereal",
-    "Oats": "Grass / Cereal",
-    "Rye": "Grass / Cereal",
-    "Grain sorghum": "Grass / Cereal",
-    "Rice": "Grass / Cereal",
-    "Cotton": "Mallow / Fiber",
-    "Potatoes": "Nightshade / Tuber",
-    "Alfalfa": "Legume",
-    "Sunflower": "Aster / Oilseed",
-    "Canola": "Brassica / Oilseed",
-    "Sugarbeets": "Amaranth / Root",
-    "Dry beans": "Legume",
-    "Peanuts": "Legume",
-}
+CROP_FAMILIES = {"Corn": "Grass / Cereal", "Soybeans": "Legume"}
 
-CROPS = list(CROP_FAMILIES.keys())
-ALL_ROTATIONS = [f"{c1} -> {c2}" for c1 in CROPS for c2 in CROPS]
-
-@st.cache_data
-def get_us_counties_with_fips():
-    # 1. Try live local backend API first
-    try:
-        resp = requests.get("http://localhost:8000/api/v1/capabilities", timeout=4)
-        resp.raise_for_status()
-        ml_counties = resp.json().get("planning", {}).get("supported_ml_counties", [])
-        if ml_counties:
-            return {
-                c["county_label"]: str(c["county_fips"]).zfill(5)
-                for c in ml_counties
-            }
-    except Exception:
-        pass
-
-    # 2. Streamlit Cloud / direct Python import fallback (uses same 595 counties!)
-    try:
-        import sys, os
-        repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-        if repo_root not in sys.path:
-            sys.path.insert(0, repo_root)
-        from backend.main import get_capabilities
-        ml_counties = get_capabilities().get("planning", {}).get("supported_ml_counties", [])
-        if ml_counties:
-            return {
-                c["county_label"]: str(c["county_fips"]).zfill(5)
-                for c in ml_counties
-            }
-    except Exception:
-        pass
-
-    return {"Allen County, KS": "20001"}
+@st.cache_data(ttl=60, show_spinner=False)
+def get_supported_counties(mode, base_url):
+    client = FieldShiftClient(mode=mode, base_url=base_url)
+    capabilities = client.capabilities()
+    return capabilities["planning"]["supported_ml_counties"], client.mode
 
 def format_crop_title(crop_slug):
     return str(crop_slug).replace("_", " ").capitalize()
 
-def to_crop_slug(crop_label):
-    slug = crop_label.strip().lower().replace(" ", "_")
-    return "sorghum" if slug == "grain_sorghum" else slug
-
 def format_score(score_val, decimals=1):
     if score_val is None:
         return "N/A"
-    if decimals == 0:
-        return f"{int(round(float(score_val)))}/100"
     return f"{float(score_val):.{decimals}f}"
 
-def get_ideal_rotations_from_backend(fips, first_harvest, planned_rotation, require_family_change, margin_weight):
-    c1_raw, c2_raw = [c.strip() for c in planned_rotation.split("->")]
-    margin_w = round(margin_weight / 100.0, 2)
-    shortfall_w = round((100 - margin_weight) / 100.0, 2)
-
-    payload = {
-        "county_fips": str(fips).zfill(5),
-        "first_harvest_year": int(first_harvest),
-        "horizon_years": 2,
-        "yield_basis": "ml_prediction",
-        "baseline_rotation": [to_crop_slug(c1_raw), to_crop_slug(c2_raw)],
-        "require_crop_family_change": bool(require_family_change),
-        "weights": {
-            "margin": margin_w,
-            "lower_rainfed_shortfall": shortfall_w,
-        },
-    }
-
-    # 1. Try live HTTP backend first
-    try:
-        resp = requests.post(
-            "http://localhost:8000/api/v1/planning/compare",
-            json=payload,
-            timeout=5,
-        )
-        resp.raise_for_status()
-        return resp.json()
-    except Exception:
-        pass
-
-    # 2. Streamlit Cloud direct-function fallback (runs backend logic without localhost server!)
-    try:
-        import sys, os
-        repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-        if repo_root not in sys.path:
-            sys.path.insert(0, repo_root)
-        from backend.main import compare_planning, PlanningCompareRequest
-        req_obj = PlanningCompareRequest(**payload)
-        res = compare_planning(req_obj)
-        return res.model_dump() if hasattr(res, "model_dump") else dict(res)
-    except Exception:
-        return {
-            "baseline": {
-                "seasons": [
-                    {"harvest_year": int(first_harvest), "crop": to_crop_slug(c1_raw)},
-                    {"harvest_year": int(first_harvest) + 1, "crop": to_crop_slug(c2_raw)},
-                ],
-                "annual_margin_usd_per_acre": 145,
-                "rainfed_shortfall_mm": 70,
-                "score": 0.0,
-                "explanation": "Offline fallback.",
-            },
-            "rotations": [],
-        }
 # TOP BANNER
 st.markdown(
     '<div style="background: linear-gradient(90deg, rgba(26,36,33,0.97) 0%, rgba(26,36,33,0.85) 55%, rgba(65,89,58,0.80) 100%); padding: 16px 26px; border-radius: 10px; margin-bottom: 18px; display: flex; align-items: center; gap: 14px; border-bottom: 3px solid #2E4034;">'
@@ -239,43 +136,58 @@ st.markdown("<h1 style='color: #1A2421; font-size: 30px; margin-top: 0; margin-b
 left_col, right_col = st.columns([1.05, 2.35], gap="large")
 
 with left_col:
-    county_to_fips = get_us_counties_with_fips()
-    county_names = sorted(county_to_fips.keys())
+    configured_mode = os.getenv("FIELDSHIFT_BACKEND_MODE", "auto")
+    api_url = os.getenv("FIELDSHIFT_API_URL", "http://127.0.0.1:8000")
+    try:
+        county_entries, backend_mode = get_supported_counties(configured_mode, api_url)
+    except BackendError as error:
+        st.error(str(error))
+        st.stop()
+    counties_by_label = {entry["county_label"]: entry for entry in county_entries}
+    county_names = sorted(counties_by_label)
     default_idx = county_names.index("Allen County, KS") if "Allen County, KS" in county_names else 0
-
-    selected_county = st.selectbox("County", options=county_names, index=default_idx, placeholder="type or select your county name")
-    selected_fips = county_to_fips[selected_county]
-    first_harvest = st.selectbox("First harvest", options=list(range(2026, 2036)), index=0)
-    planned_rotation = st.selectbox("Your planned rotation", options=ALL_ROTATIONS, index=0)
-    require_family_change = st.checkbox("Requires a crop-family change", value=True)
-
-    st.markdown("<p style='font-size: 12px; font-weight: 700; letter-spacing: 0.8px; margin-top: 14px; margin-bottom: 4px;'>PRIORITIES</p>", unsafe_allow_html=True)
-    margin_weight = st.slider("Priority balance", min_value=0, max_value=100, value=35, label_visibility="collapsed")
-    shortfall_weight = 100 - margin_weight
-
-    st.markdown(
-        f"<div style='display: flex; justify-content: space-between; font-size: 13px; color: #4A4E4D; margin-top: -6px;'>"
-        f"<span>Higher margin: <b>{margin_weight}%</b></span>"
-        f"<span style='text-align: right;'>Lower rainfall shortfall: <b>{shortfall_weight}%</b></span>"
-        f"</div>",
-        unsafe_allow_html=True,
-    )
- 
-    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
-    compare_clicked = st.button("Compare rotations")
+    with st.form("rotation_comparison"):
+        selected_county = st.selectbox("County", options=county_names, index=default_idx)
+        selected = counties_by_label[selected_county]
+        selected_fips = selected["county_fips"]
+        first_harvest = st.selectbox("First harvest", options=list(range(2026, 2036)), index=0)
+        crops = [format_crop_title(crop) for crop in selected["crops"] if crop in ("corn", "soybeans")]
+        rotations = [f"{first} -> {second}" for first in crops for second in crops]
+        planned_rotation = st.selectbox("Your planned rotation", options=rotations, index=0)
+        require_family_change = st.checkbox("Requires a crop-family change", value=True)
+        st.markdown("<p style='font-size:12px;font-weight:700;margin-top:14px;'>PRIORITIES</p>", unsafe_allow_html=True)
+        margin_weight = st.slider("Higher margin priority (%)", min_value=0, max_value=100, value=35)
+        st.caption(f"Higher margin: {margin_weight}% · Lower rainfed shortfall: {100 - margin_weight}%")
+        compare_clicked = st.form_submit_button("Compare rotations")
 
 with right_col:
-    if compare_clicked or "api_data" not in st.session_state:
+    if compare_clicked:
+        payload = build_payload(selected_fips, first_harvest, planned_rotation, require_family_change, margin_weight)
+        st.session_state["api_data"] = None
+        st.session_state["api_error"] = None
         with st.spinner("Comparing crop rotations..."):
-            st.session_state["api_data"] = get_ideal_rotations_from_backend(
-                selected_fips,
-                first_harvest,
-                planned_rotation,
-                require_family_change,
-                margin_weight,
-            )
+            try:
+                result = FieldShiftClient(mode=backend_mode, base_url=api_url).compare(payload)
+                st.session_state["api_data"] = result
+                st.session_state["submitted_request"] = payload
+            except BackendError as error:
+                st.session_state["api_error"] = str(error)
 
-    api_data = st.session_state["api_data"]
+    if st.session_state.get("api_error"):
+        st.error(st.session_state["api_error"])
+        st.stop()
+    api_data = st.session_state.get("api_data")
+    if api_data is None:
+        st.info("Choose your county and priorities, then select Compare rotations.")
+        st.stop()
+    submitted = st.session_state["submitted_request"]
+    planning_year = submitted["first_harvest_year"]
+    scenario_count = api_data["baseline"].get("scenario_count", len(api_data.get("historical_pairs", [])))
+    st.caption(
+        f'{api_data["county_label"]} · {planning_year}–{planning_year + 1} · '
+        f'{scenario_count} historical scenarios · '
+        f'Margin priority {submitted["weights"]["margin"]:.0%}'
+    )
     base = api_data.get("baseline", {})
     base_crops = [format_crop_title(s.get("crop", "")) for s in base.get("seasons", [])]
     base_name = " -> ".join(base_crops) if base_crops else planned_rotation
@@ -283,14 +195,14 @@ with right_col:
     base_shortfall = base.get("rainfed_shortfall_mm")
     margin_disp = f"${float(base_margin):,.2f}/ac/yr" if base_margin is not None else "Margin N/A"
     shortfall_disp = f"{float(base_shortfall):,.1f} mm shortfall" if base_shortfall is not None else "Shortfall N/A"
-    base_score_str = format_score(base.get("score"), decimals=0)
-    base_note = base.get("explanation") or "Your current rotation."
+    base_score_str = format_score(base.get("score"), decimals=1)
+    base_note = escape(base.get("explanation") or "Your current rotation.")
 
     st.markdown(
         f'<div class="baseline-card"><div>'
         f'<div style="font-size: 16px; font-weight: 700; color: #1A2421;">Your current rotation: {base_name}</div>'
         f'<div style="font-size: 13px; color: #4A4E4D; margin-top: 3px;">{margin_disp} &nbsp;|&nbsp; {shortfall_disp} &nbsp;|&nbsp; <i>{base_note}</i></div>'
-        f'</div><div class="score-pill">Score: {base_score_str}</div></div>',
+        f'</div><div class="score-pill">Score: {base_score_str}/100</div></div>',
         unsafe_allow_html=True,
     )
 
@@ -332,9 +244,9 @@ with right_col:
         y2_val = t_seasons[1].get("harvest_year", first_harvest + 1) if len(t_seasons) > 1 else first_harvest + 1
         c1_fam = CROP_FAMILIES.get(c1_name, "Crop")
         c2_fam = CROP_FAMILIES.get(c2_name, "Crop")
-        explanation_text = top_rot.get("explanation") or "Comparison summary unavailable."
+        explanation_text = escape(top_rot.get("explanation") or "Comparison summary unavailable.")
 
-        st.markdown(f"<h3 style='font-size:18px; margin-top:16px; margin-bottom:10px; color:#1A2421;'>Ideal crop rotation: {c1_name} -> {c2_name}</h3>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='font-size:18px; margin-top:16px; margin-bottom:10px; color:#1A2421;'>Top-ranked alternative: {c1_name} -> {c2_name}</h3>", unsafe_allow_html=True)
 
         card_col1, card_col2 = st.columns(2, gap="medium")
         with card_col1:
@@ -353,3 +265,10 @@ with right_col:
             )
 
         st.markdown(f'<div class="summary-banner">{explanation_text}</div>', unsafe_allow_html=True)
+    with st.expander("Scenario and budget assumptions"):
+        st.write(api_data.get("economics_assumptions", ""))
+        pairs = api_data.get("historical_pairs", [])
+        st.write("Historical scenarios: " + ", ".join(f"{a}–{b}" for a, b in pairs))
+        for assumption in api_data.get("assumptions", []):
+            st.write("• " + assumption)
+
