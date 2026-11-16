@@ -128,31 +128,37 @@ ALL_ROTATIONS = [f"{c1} -> {c2}" for c1 in CROPS for c2 in CROPS]
 
 @st.cache_data
 def get_us_counties_with_fips():
+    # 1. Try live local backend API first
     try:
-        counties_url = (
-        "https:"
-        "//://githubusercontent.com"
-        "state_and_county_fips_master.csv"
-      )
-
-        df = pd.read_csv(counties_url, dtype={"fips": str})
-        df = df.dropna(subset=["state", "fips"])
-        df["fips"] = df["fips"].str.strip().str.zfill(5)
-        df["county_label"] = df["name"] + ", " + df["state"]
-        return dict(zip(df["county_label"], df["fips"]))
+        resp = requests.get("http://localhost:8000/api/v1/capabilities", timeout=4)
+        resp.raise_for_status()
+        ml_counties = resp.json().get("planning", {}).get("supported_ml_counties", [])
+        if ml_counties:
+            return {
+                c["county_label"]: str(c["county_fips"]).zfill(5)
+                for c in ml_counties
+            }
     except Exception:
-        return {
-            "Allen County, KS": "20001",
-            "Autauga County, AL": "01001",
-            "Baldwin County, AL": "01003",
-            "Barbour County, AL": "01005",
-            "Champaign County, IL": "17019",
-            "Lancaster County, PA": "42071",
-            "Montgomery County, PA": "42091",
-            "Story County, IA": "19169",
-        }
+        pass
 
-# ==============================================================================
+    # 2. Streamlit Cloud / direct Python import fallback (uses same 595 counties!)
+    try:
+        import sys, os
+        repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        if repo_root not in sys.path:
+            sys.path.insert(0, repo_root)
+        from backend.main import get_capabilities
+        ml_counties = get_capabilities().get("planning", {}).get("supported_ml_counties", [])
+        if ml_counties:
+            return {
+                c["county_label"]: str(c["county_fips"]).zfill(5)
+                for c in ml_counties
+            }
+    except Exception:
+        pass
+
+    return {"Allen County, KS": "20001"}
+
 def format_crop_title(crop_slug):
     return str(crop_slug).replace("_", " ").capitalize()
 
@@ -171,40 +177,42 @@ def get_ideal_rotations_from_backend(fips, first_harvest, planned_rotation, requ
     c1_raw, c2_raw = [c.strip() for c in planned_rotation.split("->")]
     margin_w = round(margin_weight / 100.0, 2)
     shortfall_w = round((100 - margin_weight) / 100.0, 2)
-    y1 = str(int(first_harvest))
-    y2 = str(int(first_harvest) + 1)
-
-    default_budgets = {
-        "corn": {"price_usd_per_bu": 3.93, "cost_usd_per_acre": 789.28},
-        "soybeans": {"price_usd_per_bu": 9.76, "cost_usd_per_acre": 627.54},
-    }
 
     payload = {
         "county_fips": str(fips).zfill(5),
         "first_harvest_year": int(first_harvest),
         "horizon_years": 2,
+        "yield_basis": "ml_prediction",
         "baseline_rotation": [to_crop_slug(c1_raw), to_crop_slug(c2_raw)],
         "require_crop_family_change": bool(require_family_change),
         "weights": {
             "margin": margin_w,
             "lower_rainfed_shortfall": shortfall_w,
         },
-        "budgets_by_year": {
-            y1: default_budgets,
-            y2: default_budgets,
-        },
-        "economics_assumptions": "2025 national prices and regional cost proxies held constant for 2026 and 2027, without inflation adjustment.",
-        "yield_basis": "ml_prediction",
     }
 
+    # 1. Try live HTTP backend first
     try:
         resp = requests.post(
-            "http://" + "127.0.0.1:8000/api/v1/planning/compare",
+            "http://localhost:8000/api/v1/planning/compare",
             json=payload,
             timeout=5,
         )
         resp.raise_for_status()
         return resp.json()
+    except Exception:
+        pass
+
+    # 2. Streamlit Cloud direct-function fallback (runs backend logic without localhost server!)
+    try:
+        import sys, os
+        repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        if repo_root not in sys.path:
+            sys.path.insert(0, repo_root)
+        from backend.main import compare_planning, PlanningCompareRequest
+        req_obj = PlanningCompareRequest(**payload)
+        res = compare_planning(req_obj)
+        return res.model_dump() if hasattr(res, "model_dump") else dict(res)
     except Exception:
         return {
             "baseline": {
@@ -215,21 +223,9 @@ def get_ideal_rotations_from_backend(fips, first_harvest, planned_rotation, requ
                 "annual_margin_usd_per_acre": 145,
                 "rainfed_shortfall_mm": 70,
                 "score": 0.0,
-                "explanation": "Offline fallback (start backend server for live ML results).",
+                "explanation": "Offline fallback.",
             },
-            "rotations": [
-                {
-                    "seasons": [
-                        {"harvest_year": int(first_harvest), "crop": "soybeans"},
-                        {"harvest_year": int(first_harvest) + 1, "crop": "corn"},
-                    ],
-                    "annual_margin_usd_per_acre": 150,
-                    "rainfed_shortfall_mm": 40,
-                    "score": 70.0,
-                    "rank": 1,
-                    "explanation": "Compared with the baseline: $5 more margin per acre per year, with 30 mm less rainfed shortfall over two years.",
-                }
-            ],
+            "rotations": [],
         }
 # TOP BANNER
 st.markdown(
