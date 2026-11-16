@@ -18,6 +18,30 @@ This is our repository for the NASA Farming Challenge, a brief explanation of ho
 7. We then merged in the NASA_Power dataset acquired from https://power.larc.nasa.gov/ using nasa_data_merge.py to produce the final file nasa_data_merged.py.
 
 
+## System Architecture
+
+```mermaid
+flowchart TD
+    A["USDA yields, crop coverage<br/>and NASA POWER weather"] --> B["Data preparation"]
+    B --> C["Random forest yield estimates"]
+
+    D["SMAP, soil properties,<br/>daily rainfall and reference ET"] --> E["Daily water balance"]
+    F["Crop characteristics<br/>and growing-degree days"] --> E
+    F --> G["Thermal feasibility screen"]
+
+    C --> H["Margin calculation"]
+    I["Crop prices and production costs"] --> H
+
+    E --> J["Prepared county scenarios<br/>Cached water results and margins"]
+    G --> J
+    H --> J
+
+    J --> K["FastAPI<br/>Aggregate, score, rank and explain"]
+    L["Farmer selections<br/>County, baseline, weights and filter"] --> K
+    K --> M["Streamlit dashboard<br/>Baseline and ranked alternatives"]
+```
+
+
 For yield prediction training - training_data_files_generation.py creates our training data csvs. We then tested three different ML models on the corn, oats and soybean datasets
 
 The results of the models were:
