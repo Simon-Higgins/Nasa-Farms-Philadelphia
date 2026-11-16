@@ -14,10 +14,12 @@ st.set_page_config(page_title="FieldShift - Compare Crop Rotations", layout="wid
 st.markdown("""
 <style>
 /* GLOBAL FONT */
+/* Target text elements so Material icon spans keep their own font. */
 html, body,
 [data-testid="stAppViewContainer"],
-[data-testid="stAppViewContainer"] *,
-[data-testid="stSidebar"] * {
+[data-testid="stSidebar"],
+[data-testid="stAppViewContainer"] :is(p, label, h1, h2, h3, h4, h5, h6, button, input, textarea, select),
+[data-testid="stSidebar"] :is(p, label, h1, h2, h3, h4, h5, h6, button, input, textarea, select) {
     font-family: Arial, Helvetica, sans-serif !important;
 }
 
