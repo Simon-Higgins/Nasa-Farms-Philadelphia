@@ -1,0 +1,349 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+import requests
+
+st.set_page_config(page_title="FieldShift - Compare Crop Rotations", layout="wide")
+
+st.markdown("""
+    <style>
+    html, body, [class*="css"] {
+        font-family: 'Arial', sans-serif !important;
+        color: #1A2421;
+    }
+    [data-testid="stAppViewContainer"] {
+        background-color: #F8F6F0;
+    }
+    [data-testid="stHeader"] {
+        background-color: #F8F6F0;
+    }
+    .block-container {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+    div[data-baseweb="select"] > div {
+        background-color: #FFFFFF !important;
+        border: 1px solid #C8C4B8 !important;
+        border-radius: 6px !important;
+        color: #1A2421 !important;
+    }
+    .stButton > button {
+        background-color: #1A2421 !important;
+        color: #F8F6F0 !important;
+        border: none !important;
+        border-radius: 6px !important;
+        padding: 0.55rem 1rem !important;
+        font-weight: 600 !important;
+        width: 100%;
+    }
+    .stButton > button:hover {
+        background-color: #2B3B36 !important;
+        color: #FDF0AC !important;
+    }
+    .baseline-card {
+        background-color: #EAE6D9;
+        border: 1px solid #D5D0C0;
+        border-radius: 8px;
+        padding: 14px 18px;
+        margin-bottom: 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .score-pill {
+        background-color: #1A2421;
+        color: #FDF0AC;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 15px;
+    }
+    .alt-row {
+        background-color: #FFFFFF;
+        border: 1px solid #DCD8CA;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 10px;
+    }
+    .alt-row-active {
+        background-color: #FDF0AC;
+        border: 1.5px solid #1A2421;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 10px;
+    }
+    .crop-stage-card {
+        background-color: #1A2421;
+        color: #F8F6F0;
+        border-radius: 10px;
+        padding: 20px;
+        border-bottom: 4px solid #FDF0AC;
+    }
+    .family-tag {
+        display: inline-block;
+        background-color: #FDF0AC;
+        color: #1A2421;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 4px;
+        margin-top: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .summary-banner {
+        background-color: #EAE6D9;
+        border-left: 4px solid #1A2421;
+        padding: 12px 16px;
+        border-radius: 6px;
+        margin-top: 16px;
+        font-size: 14px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+CROP_FAMILIES = {
+    "Corn": "Grass / Cereal",
+    "Soybeans": "Legume",
+    "Spring wheat": "Grass / Cereal",
+    "Winter wheat": "Grass / Cereal",
+    "Durum wheat": "Grass / Cereal",
+    "Barley": "Grass / Cereal",
+    "Oats": "Grass / Cereal",
+    "Rye": "Grass / Cereal",
+    "Grain sorghum": "Grass / Cereal",
+    "Rice": "Grass / Cereal",
+    "Cotton": "Mallow / Fiber",
+    "Potatoes": "Nightshade / Tuber",
+    "Alfalfa": "Legume",
+    "Sunflower": "Aster / Oilseed",
+    "Canola": "Brassica / Oilseed",
+    "Sugarbeets": "Amaranth / Root",
+    "Dry beans": "Legume",
+    "Peanuts": "Legume",
+}
+
+CROPS = list(CROP_FAMILIES.keys())
+ALL_ROTATIONS = [f"{c1} -> {c2}" for c1 in CROPS for c2 in CROPS]
+
+@st.cache_data
+def get_us_counties_with_fips():
+    # 1. Try live local backend API first
+    try:
+        resp = requests.get("http://localhost:8000/api/v1/capabilities", timeout=4)
+        resp.raise_for_status()
+        ml_counties = resp.json().get("planning", {}).get("supported_ml_counties", [])
+        if ml_counties:
+            return {
+                c["county_label"]: str(c["county_fips"]).zfill(5)
+                for c in ml_counties
+            }
+
+        df = pd.read_csv(counties_url, dtype={"fips": str})
+        df = df.dropna(subset=["state", "fips"])
+        df["fips"] = df["fips"].str.strip().str.zfill(5)
+        df["county_label"] = df["name"] + ", " + df["state"]
+        return dict(zip(df["county_label"], df["fips"]))
+    except Exception:
+        return {
+            "Allen County, KS": "20001",
+            "Autauga County, AL": "01001",
+            "Baldwin County, AL": "01003",
+            "Barbour County, AL": "01005",
+            "Champaign County, IL": "17019",
+            "Lancaster County, PA": "42071",
+            "Montgomery County, PA": "42091",
+            "Story County, IA": "19169",
+            )
+def format_crop_title(crop_slug):
+    return str(crop_slug).replace("_", " ").capitalize()
+
+def to_crop_slug(crop_label):
+    slug = crop_label.strip().lower().replace(" ", "_")
+    return "sorghum" if slug == "grain_sorghum" else slug
+
+def format_score(score_val, decimals=1):
+    if score_val is None:
+        return "N/A"
+    if decimals == 0:
+        return f"{int(round(float(score_val)))}/100"
+    return f"{float(score_val):.{decimals}f}"
+
+def get_ideal_rotations_from_backend(fips, first_harvest, planned_rotation, require_family_change, margin_weight):
+    c1_raw, c2_raw = [c.strip() for c in planned_rotation.split("->")]
+    margin_w = round(margin_weight / 100.0, 2)
+    shortfall_w = round((100 - margin_weight) / 100.0, 2)
+    y1 = str(int(first_harvest))
+    y2 = str(int(first_harvest) + 1)
+
+    default_budgets = {
+        "corn": {"price_usd_per_bu": 3.93, "cost_usd_per_acre": 789.28},
+        "soybeans": {"price_usd_per_bu": 9.76, "cost_usd_per_acre": 627.54},
+    }
+    payload = {
+        "county_fips": str(fips).zfill(5),
+        "first_harvest_year": int(first_harvest),
+        "horizon_years": 2,
+        "baseline_rotation": [to_crop_slug(c1_raw), to_crop_slug(c2_raw)],
+        "require_crop_family_change": bool(require_family_change),
+        "weights": {
+            "margin": margin_w,
+            "lower_rainfed_shortfall": shortfall_w,
+        },
+        "budgets_by_year": {
+            y1: default_budgets,
+            y2: default_budgets,
+        },
+        "economics_assumptions": "2025 national prices and regional cost proxies held constant for 2026 and 2027, without inflation adjustment.",
+        "yield_basis": "ml_prediction",
+    }
+
+    # 1. Try live HTTP backend first
+    try:
+        resp = requests.post(
+            "http://" + "127.0.0.1:8000/api/v1/planning/compare",
+            json=payload,
+            timeout=5,
+        )
+        resp.raise_for_status()
+        return resp.json()
+    except Exception:
+        return {
+            "baseline": {
+                "seasons": [
+                    {"harvest_year": int(first_harvest), "crop": to_crop_slug(c1_raw)},
+                    {"harvest_year": int(first_harvest) + 1, "crop": to_crop_slug(c2_raw)},
+                ],
+                "annual_margin_usd_per_acre": 145,
+                "rainfed_shortfall_mm": 70,
+                "score": 0.0,
+                "explanation": "Offline fallback.",
+            },
+            "rotations": [],
+        }
+# TOP BANNER
+st.markdown(
+    '<div style="background: linear-gradient(90deg, rgba(26,36,33,0.97) 0%, rgba(26,36,33,0.85) 55%, rgba(65,89,58,0.80) 100%); padding: 16px 26px; border-radius: 10px; margin-bottom: 18px; display: flex; align-items: center; gap: 14px; border-bottom: 3px solid #2E4034;">'
+    '<span style="color: #F8F6F0; font-size: 26px; font-weight: 700;">FieldShift</span>'
+    '</div>',
+    unsafe_allow_html=True,
+)
+st.markdown("<h1 style='color: #1A2421; font-size: 30px; margin-top: 0; margin-bottom: 16px;'>Compare crop rotations</h1>", unsafe_allow_html=True)
+
+left_col, right_col = st.columns([1.05, 2.35], gap="large")
+
+with left_col:
+    county_to_fips = get_us_counties_with_fips()
+    county_names = sorted(county_to_fips.keys())
+    default_idx = county_names.index("Allen County, KS") if "Allen County, KS" in county_names else 0
+
+    selected_county = st.selectbox("County", options=county_names, index=default_idx, placeholder="type or select your county name")
+    selected_fips = county_to_fips[selected_county]
+    first_harvest = st.selectbox("First harvest", options=list(range(2026, 2036)), index=0)
+    planned_rotation = st.selectbox("Your planned rotation", options=ALL_ROTATIONS, index=0)
+    require_family_change = st.checkbox("Requires a crop-family change", value=True)
+
+    st.markdown("<p style='font-size: 12px; font-weight: 700; letter-spacing: 0.8px; margin-top: 14px; margin-bottom: 4px;'>PRIORITIES</p>", unsafe_allow_html=True)
+    margin_weight = st.slider("Priority balance", min_value=0, max_value=100, value=35, label_visibility="collapsed")
+    shortfall_weight = 100 - margin_weight
+
+    st.markdown(
+        f"<div style='display: flex; justify-content: space-between; font-size: 13px; color: #4A4E4D; margin-top: -6px;'>"
+        f"<span>Higher margin: <b>{margin_weight}%</b></span>"
+        f"<span style='text-align: right;'>Lower rainfall shortfall: <b>{shortfall_weight}%</b></span>"
+        f"</div>",
+        unsafe_allow_html=True,
+    )
+ 
+    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+    compare_clicked = st.button("Compare rotations")
+
+with right_col:
+    if compare_clicked or "api_data" not in st.session_state:
+        with st.spinner("Comparing crop rotations..."):
+            st.session_state["api_data"] = get_ideal_rotations_from_backend(
+                selected_fips,
+                first_harvest,
+                planned_rotation,
+                require_family_change,
+                margin_weight,
+            )
+
+    api_data = st.session_state["api_data"]
+    base = api_data.get("baseline", {})
+    base_crops = [format_crop_title(s.get("crop", "")) for s in base.get("seasons", [])]
+    base_name = " -> ".join(base_crops) if base_crops else planned_rotation
+    base_margin = base.get("annual_margin_usd_per_acre")
+    base_shortfall = base.get("rainfed_shortfall_mm")
+    margin_disp = f"${float(base_margin):,.2f}/ac/yr" if base_margin is not None else "Margin N/A"
+    shortfall_disp = f"{float(base_shortfall):,.1f} mm shortfall" if base_shortfall is not None else "Shortfall N/A"
+    base_score_str = format_score(base.get("score"), decimals=0)
+    base_note = base.get("explanation") or "Your current rotation."
+
+    st.markdown(
+        f'<div class="baseline-card"><div>'
+        f'<div style="font-size: 16px; font-weight: 700; color: #1A2421;">Your current rotation: {base_name}</div>'
+        f'<div style="font-size: 13px; color: #4A4E4D; margin-top: 3px;">{margin_disp} &nbsp;|&nbsp; {shortfall_disp} &nbsp;|&nbsp; <i>{base_note}</i></div>'
+        f'</div><div class="score-pill">Score: {base_score_str}</div></div>',
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("<h3 style='font-size: 18px; margin-bottom: 8px; color: #1A2421;'>Top eligible alternatives</h3>", unsafe_allow_html=True)
+    rotations = api_data.get("rotations") or []
+
+    if not rotations:
+        st.info("No eligible alternative rotations matched your current filters.")
+    else:
+        h1, h2, h3, h4 = st.columns([2.2, 1.3, 1.3, 1.1])
+        h1.caption("**Rotation**")
+        h2.caption("**Annual margin**")
+        h3.caption("**2-year shortfall**")
+        h4.caption("**Score (out of 100)**")
+
+        for idx, rot in enumerate(rotations):
+            r_crops = [format_crop_title(s.get("crop", "")) for s in rot.get("seasons", [])]
+            r_name = " -> ".join(r_crops)
+            r_margin = f"${float(rot['annual_margin_usd_per_acre']):,.2f}/ac/yr" if rot.get("annual_margin_usd_per_acre") is not None else "N/A"
+            r_shortfall = f"{float(rot['rainfed_shortfall_mm']):,.1f} mm" if rot.get("rainfed_shortfall_mm") is not None else "N/A"
+            r_score = format_score(rot.get("score"), decimals=1)
+            row_class = "alt-row-active" if idx == 0 else "alt-row"
+            badge = "* " if idx == 0 else ""
+
+            st.markdown(
+                f'<div class="{row_class}" style="display:flex; justify-content:space-between; align-items:center;">'
+                f'<div style="flex:2.2; font-weight:700; font-size:15px;">{badge}{r_name}</div>'
+                f'<div style="flex:1.3; font-size:14px;">{r_margin}</div>'
+                f'<div style="flex:1.3; font-size:14px;">{r_shortfall}</div>'
+                f'<div style="flex:1.1; font-weight:700; font-size:15px; text-align:right;">{r_score}</div></div>',
+                unsafe_allow_html=True,
+            )
+
+        top_rot = rotations[0]
+        t_seasons = top_rot.get("seasons", [])
+        c1_name = format_crop_title(t_seasons[0].get("crop", "")) if len(t_seasons) > 0 else "Crop 1"
+        c2_name = format_crop_title(t_seasons[1].get("crop", "")) if len(t_seasons) > 1 else "Crop 2"
+        y1_val = t_seasons[0].get("harvest_year", first_harvest) if len(t_seasons) > 0 else first_harvest
+        y2_val = t_seasons[1].get("harvest_year", first_harvest + 1) if len(t_seasons) > 1 else first_harvest + 1
+        c1_fam = CROP_FAMILIES.get(c1_name, "Crop")
+        c2_fam = CROP_FAMILIES.get(c2_name, "Crop")
+        explanation_text = top_rot.get("explanation") or "Comparison summary unavailable."
+
+        st.markdown(f"<h3 style='font-size:18px; margin-top:16px; margin-bottom:10px; color:#1A2421;'>Ideal crop rotation: {c1_name} -> {c2_name}</h3>", unsafe_allow_html=True)
+
+        card_col1, card_col2 = st.columns(2, gap="medium")
+        with card_col1:
+            st.markdown(
+                f'<div class="crop-stage-card"><div style="font-size:12px; color:#FDF0AC; font-weight:700;">YEAR 1 • {y1_val} HARVEST</div>'
+                f'<div style="font-size:22px; font-weight:700; margin-top:4px;">{c1_name}</div>'
+                f'<div class="family-tag">{c1_fam}</div></div>',
+                unsafe_allow_html=True,
+            )
+        with card_col2:
+            st.markdown(
+                f'<div class="crop-stage-card"><div style="font-size:12px; color:#FDF0AC; font-weight:700;">YEAR 2 • {y2_val} HARVEST</div>'
+                f'<div style="font-size:22px; font-weight:700; margin-top:4px;">{c2_name}</div>'
+                f'<div class="family-tag">{c2_fam}</div></div>',
+                unsafe_allow_html=True,
+            )
+
+        st.markdown(f'<div class="summary-banner">{explanation_text}</div>', unsafe_allow_html=True)

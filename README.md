@@ -1,26 +1,79 @@
-This is our repository for the NASA Farming Challenge, a brief explanation of how it works below.
+# FieldShift: Adapting Farms with NASA Data
 
-1. We went to https://quickstats.nass.usda.gov/ and pulled a county farm yield file from the years 2025-2019 for a variety of crops that file is located under files -> usda_yields.csv
-  
-2. We went to cropland OS - https://www.nass.usda.gov/research-and-science/cropland/release?utm_source=chatgpt.com from the USDA.
-   This site provides pixel specific data downloads of what crops are being grown in the US each year, the pixels are at a 30m resolution. In order to match this with our county level yield data we created a script that aggregates
-   the cropland data into a 5 km square with a latitude and longitude located at the center. The script aggregates the pixels up and outputs a percentage of each crop grown in that 5km region as well as a pixel count.
-   The script we run to aggregate the cropland data is in scripts -> Loadcdls.py and outputs files -> national_crop_rotations.py
-  
-3. We cleaned up the usda_yields file, pivoting the file to create a new column for every single crop yield in a given year at the county level. The script for this is pivot_yields.py and the output is county_yields_wide.csv
-4. We then merged the CDL cropland OS data with our yields data at the county level. To do this we needed to geotag the lat/lon centroid of our cropland data into a specific county using geopandas. The script that does this is
-   merge_cdls_to_yields.py. We weren't familiar with geopandas before this challenge so we used some gpt to help us write the script although it was much more straightforward then the cdl load. The output file from this process is
-   is cdl_with_yields.py
+FieldShift is our project for the NASA Farming Challenge. It combines agricultural data, NASA Earth observations, machine-learning yield estimates, and environmental analysis to help farmers compare crop rotation strategies.
 
-6. Next we cleaned the cdl_with_yields.py file with the script cdl_with_yields_cleanup.py. This script primarily aggregates the cdls turning multiple rows per county into one county total that aggregates the total percentage of each crop
- in the county based on the weighted pixel count from each of the 5km square regions tagged to that county.
+## System Architecture
 
-7. We then merged in the NASA_Power dataset acquired from https://power.larc.nasa.gov/ using nasa_data_merge.py to produce the final file nasa_data_merged.py.
+```mermaid
+flowchart TD
+    A["USDA yields, crop coverage and NASA POWER weather"] --> B["Data preparation"]
+    B --> C["Random forest yield estimates"]
 
+    D["SMAP, soil properties, daily rainfall and reference ET"] --> E["Daily water balance"]
+    F["Crop characteristics and growing-degree days"] --> E
+    F --> G["Thermal feasibility screen"]
 
-For yield prediction training - training_data_files_generation.py creates our training data csvs. We then tested three different ML models on the corn, oats and soybean datasets
+    C --> H["Margin calculation"]
+    I["Crop prices and production costs"] --> H
 
-The results of the models were:
+    E --> J["Prepared county scenarios: cached water results and margins"]
+    G --> J
+    H --> J
+
+    J --> K["FastAPI: aggregate, score, rank and explain"]
+    L["Farmer selections: county, baseline, weights and filter"] --> K
+    K --> M["Streamlit dashboard: baseline and ranked alternatives"]
+```
+
+## Data Sources and Preparation
+
+### 1. Collect USDA County Yield Data
+
+We downloaded county-level farm yield data for a variety of crops covering **2019–2025** from [USDA Quick Stats](https://quickstats.nass.usda.gov/).
+
+- **Dataset:** `files/usda_yields.csv`
+
+### 2. Aggregate Cropland Coverage
+
+We downloaded annual crop coverage data from the [USDA Cropland Data Layer](https://www.nass.usda.gov/research-and-science/cropland/release).
+
+The data identifies crops grown across the United States at a 30-meter pixel resolution. To connect these observations with county-level yield data, we aggregated the pixels into 5 km squares, each represented by its center latitude and longitude. For each square, the script calculates crop percentages and pixel counts.
+
+- **Script:** `scripts/Loadcdls.py`
+- **Output:** `files/national_crop_rotations.py`
+
+### 3. Reshape County Yield Data
+
+We cleaned and pivoted the USDA yield data to create a separate column for each crop-year yield measurement at the county level.
+
+- **Script:** `pivot_yields.py`
+- **Output:** `county_yields_wide.csv`
+
+### 4. Match Cropland Observations to Counties
+
+We used GeoPandas to assign each cropland square’s latitude/longitude centroid to a county, then merged the cropland observations with county yield data.
+
+Because we were unfamiliar with GeoPandas, we used ChatGPT to help develop this script.
+
+- **Script:** `merge_cdls_to_yields.py`
+- **Output:** `cdl_with_yields.py`
+
+### 5. Aggregate Crop Percentages by County
+
+We combined multiple cropland observations into one record per county. County crop percentages are calculated using the pixel counts of the associated 5 km squares as weights.
+
+- **Script:** `cdl_with_yields_cleanup.py`
+
+### 6. Merge NASA POWER Data
+
+We merged the agricultural dataset with weather data obtained from [NASA POWER](https://power.larc.nasa.gov/).
+
+- **Script:** `nasa_data_merge.py`
+- **Output:** `nasa_data_merged.py`
+
+## Yield Prediction Models
+
+The script `training_data_files_generation.py` creates the training CSV files. We evaluated three machine-learning models separately on the corn, oats, and soybean datasets.
 
 ### MLP Neural Network Results
 
@@ -46,19 +99,48 @@ The results of the models were:
 | Oats | **10.92** | **211.87** | **0.305** |
 | Soybeans | **4.74** | **37.95** | **0.714** |
 
-As Random Forest performed the best we ran our entire original training datasets through the RandomForestRegressor in order to come up with a predicted yield for every year and every county for our three crops.
+### Selected Model
 
-AI USAGE
+Random forest performed best among the three models. We then applied each crop’s trained `RandomForestRegressor` to its entire original training dataset to generate yield estimates for every county-year record in the corn, oats, and soybean datasets.
 
-Given this was a 48 hour hackathon and AI/SI usage was encouraged we used SI quite a bit, most of our data aggregation and data loading scripts were made either partially or entirely with chatgpt, the training of the models was not done with any substantial amount of gpt usage.
+## Backend: Environmental Analysis and Rotation Ranking
 
-Scripts with heavy ai usage
+The FastAPI backend supports **595 U.S. counties** for corn and soybean comparisons.
 
-loadcdls.py, cld_with_yields_cleanup.py, merge_cdls_to_yields.py, pivot_yields.py, training_data_files_generation.py
+- **Water shortfall:** A daily soil-water balance combines planting-day SMAP, soil storage capacity, precipitation, and crop demand calculated from reference ET₀ and stage-specific crop coefficients. Growing-degree days screen thermal feasibility.
+- **Economics:** ML-predicted yield × crop price − production cost. Default margins use 2025 national prices and 2026 regional cost proxies, held constant across both planning years.
+- **Scenarios:** Evaluate up to four consecutive historical pairs from 2020–2024, averaging annual margins and two-year water shortfalls across complete pairs.
+- **Ranking:** Normalize both indicators, apply farmer-selected weights and the crop-family filter, and return a scored baseline plus up to two ranked alternatives with explanations.
 
-Scripts with minimal AI usage
+Environmental results and default margins are precomputed. **All 23 backend tests pass.**
 
-linear_reg.py, neural_net.py, random_forest.py, nasa_data_merge.py
+## Frontend: 
+
+### Modeling Assumptions
+
+The model assumes fixed root depth and zero irrigation. Previous-crop yield effects and direct soil-health changes are not modeled.
+
+## AI Usage
+
+During this 48-hour hackathon, where AI/SI usage was encouraged, we used ChatGPT to help develop many of the data aggregation and loading scripts.
+
+The model-training code was mostly handwritten, with limited AI assistance to speed up repetitive code changes across crop datasets.
+
+### Scripts with Substantial AI Assistance
+
+- `loadcdls.py`
+- `cld_with_yields_cleanup.py`
+- `merge_cdls_to_yields.py`
+- `pivot_yields.py`
+- `training_data_files_generation.py`
+
+### Scripts with Minimal AI Assistance
+
+- `linear_reg.py`
+- `neural_net.py`
+- `random_forest.py`
+- `nasa_data_merge.py`
+
 
 
 

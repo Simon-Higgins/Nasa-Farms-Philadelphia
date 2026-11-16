@@ -128,7 +128,7 @@ above uses its own matched historical pairs. Both use the daily bucket assumptio
 
 Current status: demo and Allen County 2024-2025 historical comparisons work.
 `GET /api/v1/capabilities` lists the prepared county/year choices for the
-frontend. Simon's prediction import boundary is ready; forecast ranking is not
+frontend. Prediction import boundary is ready; forecast ranking is not
 enabled pending his files and explicit scenario/economics/environment inputs.
 
 Run from the repository root (PowerShell):
@@ -178,7 +178,7 @@ single-season weather replay across the two-year horizon. Keep the farmer's
 baseline separate from alternative ranks and return missing-data reasons rather
 than a fabricated passing heat status or zero shortfall.
 
-## Environmental analysis (independent of Simon's ML)
+## Environmental analysis (independent of ML)
 
 The source directory now uses a flat layout. The input loader accepts the older
 `share/` and `cost/` paths too, and uses `nasa_data_merged(simon).csv` when the
@@ -301,10 +301,10 @@ Scores are relative, not percentages of success. Negative margins are retained.
 An alternative can score below the baseline. Allen County's 2025 sorghum yield
 is missing; selecting a sequence that needs it produces a missing-yield reason.
 The 2025 seasonal analysis is also available through the existing analysis GET
-route. Simon's ML has not been connected; `yield_basis` remains explicitly
+route. ML has not been connected; `yield_basis` remains explicitly
 `observed_county_yield` in every scored season.
 
-## Simon's yield prediction handoff
+## Yield prediction handoff
 
 `backend.predictions.load_crop_csv` imports separate corn, oats and soybean
 files without requiring Simon to rename their columns. Configure the exact
@@ -359,7 +359,7 @@ Run all checks from the repository root:
 
 ### Received prediction exports (November 15)
 
-Full-content inspection of Simon's supplied exports found identical headers:
+Full-content inspection of supplied exports found identical headers:
 `county_fips`, `county_name`, coordinates, `year`, crop-share delta features,
 NASA weather features, observed `yield`, and `predicted_yield`.
 
