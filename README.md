@@ -133,6 +133,17 @@ The model-training code was mostly handwritten, with limited AI assistance to sp
 - `merge_cdls_to_yields.py`
 - `pivot_yields.py`
 - `training_data_files_generation.py`
+- `backend/main.py`
+- `backend/planning.py`
+- `backend/historical.py`
+- `backend/environment.py`
+- `backend/county_inputs.py`
+- `backend/batch_inputs.py`
+- `backend/prepare_analysis.py`
+- `backend/coverage.py`
+- `backend/predictions.py`
+- `backend/prepare_counties.py`
+- `backend/prepare_margins.py`
 
 ### Scripts with Minimal AI Assistance
 
@@ -140,6 +151,12 @@ The model-training code was mostly handwritten, with limited AI assistance to sp
 - `neural_net.py`
 - `random_forest.py`
 - `nasa_data_merge.py`
+- `backend/test_contract.py`
+- `backend/test_environment.py`
+- `backend/test_historical.py`
+- `backend/test_planning.py`
+- `backend/test_predictions.py`
+
 
 
 
